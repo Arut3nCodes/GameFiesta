@@ -3,14 +3,23 @@ package com.example.gamefiesta;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Data;
+
+@Data
+@Document
 public class Tournament {
-    String _id;
-    String organizer;
-    List<String> listOfMods;
-    List<String> listOfTeams;
-    List<List<String>> listOfSquads;
-    List<String> listOfPrices;
+    @Id
+    private String _id;
+    private String organizer;
+    private List<String> listOfMods;
+    private List<String> listOfTeams;
+    private List<List<String>> listOfSquads;
+    private List<String> listOfPrices;
     //Bracket bracket;
-    Date date;
-    String status;
+    private Bracket bracket;
+    private Date date;
+    private String status;
 }
