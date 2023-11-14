@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Document
-public class User {
+public class Users {
     @Id
     private String _id;
     @Indexed(unique = true)
@@ -21,7 +21,7 @@ public class User {
 
 
 
-    public User(String username, String password, String permissions, String email) {
+    public Users(String username, String password, String permissions, String email) {
         this.username = username;
         this.password = password;
         this.permissions = permissions;
