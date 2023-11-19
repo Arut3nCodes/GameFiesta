@@ -8,11 +8,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Document
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Users implements UserDetails {
     @Id
     private String _id;
