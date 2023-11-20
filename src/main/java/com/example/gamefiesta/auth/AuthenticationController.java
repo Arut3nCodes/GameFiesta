@@ -1,10 +1,16 @@
 package com.example.gamefiesta.auth;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.gamefiesta.Users;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,10 +23,14 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticatioResponse> register(
-        @RequestBody RegisterRequest request
+        @ModelAttribute RegisterRequest request
     ){
+        System.err.println("ASDASDASDASDASD");
         return ResponseEntity.ok(service.register(request));
     }
+
+
+
         @PostMapping("/authenticate")
     public ResponseEntity<AuthenticatioResponse> register(
         @RequestBody AuthenticationRequest request
