@@ -9,6 +9,8 @@
     <div id="tournaments">
         <div th:each="tournament: ${tournaments}">
             <span th:text="${tournament._id}"></span>
+            <!-- <button onClick="javascript:window.location.href='/tournaments/[[${tournament._id}]]'">Edit</button> -->
+            <button th:onclick="javascript:window.location.href='/tournaments/[(${tournament._id})]'"></button>
         </div>
 
     </div>

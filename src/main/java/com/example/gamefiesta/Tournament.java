@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Document
-@NoArgsConstructor
 @AllArgsConstructor
 public class Tournament {
     @Id

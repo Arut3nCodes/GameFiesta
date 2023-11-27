@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.gamefiesta.Tournament;
@@ -25,6 +26,12 @@ public class TournamentsController {
     public String showTournaments(Model model){
         model.addAttribute("tournaments", repository.findAll());
         return "tournaments";
+    }
+
+    @GetMapping("/{tournamentId}")
+    public String showTournament(Model model,@PathVariable String tournamentId){
+        model.addAttribute("tournament", repository.findById(tournamentId));
+        return "tournament";
     }
     
 
