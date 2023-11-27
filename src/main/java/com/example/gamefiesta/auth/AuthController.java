@@ -10,7 +10,6 @@ import com.example.gamefiesta.Users;
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
-    
 
 @GetMapping("/register")
 public String registerForm(Model model){

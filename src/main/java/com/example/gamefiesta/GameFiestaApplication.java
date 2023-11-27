@@ -32,4 +32,16 @@ public class GameFiestaApplication{
     // }
 
 
+    //     @Bean
+    // CommandLineRunner runner(TournamentRepository repository){
+    //     return args -> {
+    //         Tournament tournament = new Tournament(
+
+    //         );
+    //         // dodaje usera
+    //         repository.insert(tournament);
+    //     };
+        
+    // }
+
 }

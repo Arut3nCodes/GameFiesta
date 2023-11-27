@@ -25,7 +25,6 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticatioResponse> register(
         @ModelAttribute RegisterRequest request
     ){
-        System.err.println("ASDASDASDASDASD");
         return ResponseEntity.ok(service.register(request));
     }
 
