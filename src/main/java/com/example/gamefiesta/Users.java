@@ -1,6 +1,7 @@
 package com.example.gamefiesta;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -43,8 +44,8 @@ public class Users implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        return null;
+        // throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
     }
 
 

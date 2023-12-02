@@ -1,5 +1,7 @@
 package com.example.gamefiesta.auth;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +17,14 @@ public class AuthController {
 public String registerForm(Model model){
     Users user = new Users();
     model.addAttribute("user", user);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    System.out.println(authentication);
     return "register";
+}
+
+@GetMapping("/login")
+public String registerForm(){
+    return "login";
 }
 
 }

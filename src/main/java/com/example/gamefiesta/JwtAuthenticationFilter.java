@@ -1,6 +1,7 @@
 package com.example.gamefiesta;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFiler extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
     private final JwtService jwtService;
@@ -31,12 +32,16 @@ public class JwtAuthenticationFiler extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
+        System.out.println(authHeader);
+
+        
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;
         }
         jwt = authHeader.substring(7);
         username = jwtService.extractUsername(jwt);
+        System.out.println("asfuharsuifjdaerfjadpor");
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if(jwtService.isTokenValid(jwt, userDetails)){
