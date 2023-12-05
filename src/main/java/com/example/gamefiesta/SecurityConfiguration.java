@@ -32,15 +32,38 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfiguration  {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
+    // @Bean
+    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    //     http.csrf(AbstractHttpConfigurer::disable)
+    //             .authorizeHttpRequests(request -> request.requestMatchers("/auth/**","/**")
+    //                     .permitAll().anyRequest().authenticated())
+    //             .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS ))
+    //             .authenticationProvider(authenticationProvider).addFilterBefore(
+    //                     jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    //     return http.build();
+    // }
+
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers("/auth/**","/**")
-                        .permitAll().anyRequest().authenticated())
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS ))
-                .authenticationProvider(authenticationProvider).addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+      http.csrf(csrf -> csrf.disable())
+          
+          .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+          .authorizeHttpRequests(auth -> 
+            auth.requestMatchers("/**").permitAll()
+                .requestMatchers("/**").permitAll()
+                .anyRequest().authenticated()
+          );
+      
+   // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
+      http.headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin()));
+      
+      http.authenticationProvider(authenticationProvider);
+  
+      http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+      
+      return http.build();
     }
+
 
 }

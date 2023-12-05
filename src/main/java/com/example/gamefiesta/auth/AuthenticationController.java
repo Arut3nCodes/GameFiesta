@@ -34,6 +34,7 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticatioResponse> authenticate(
         @ModelAttribute AuthenticationRequest request
     ){
+        // return ResponseEntity.ok().header("Authenticate", service.authenticate(request))
         return ResponseEntity.ok(service.authenticate(request));
     }
 

@@ -7,7 +7,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">>
     <title>Document</title>
 </head>
 <body>
-    <span th:text="${#authentication.getPrincipal().authorities}"></span>
+    <span th:text="${#authentication.getPrincipal().getUsername}"></span>
     asdasd
 </body>
 </html>
