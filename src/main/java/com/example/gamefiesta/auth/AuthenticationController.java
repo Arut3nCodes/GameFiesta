@@ -25,17 +25,16 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticatioResponse> register(
         @ModelAttribute RegisterRequest request
     ){
-        System.err.println("ASDASDASDASDASD");
         return ResponseEntity.ok(service.register(request));
     }
 
 
 
         @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticatioResponse> register(
-        @RequestBody AuthenticationRequest request
+    public ResponseEntity<AuthenticatioResponse> authenticate(
+        @ModelAttribute AuthenticationRequest request
     ){
-        
+        // return ResponseEntity.ok().header("Authenticate", service.authenticate(request))
         return ResponseEntity.ok(service.authenticate(request));
     }
 
