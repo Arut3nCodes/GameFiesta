@@ -17,3 +17,4 @@ public class Match {
     private Date date;
     // przerobić żeby była lista "spotkań", spotkanie: TeamA, TeamB, Status, Data, a Match ma tylko tą liste i ID
 }
+
