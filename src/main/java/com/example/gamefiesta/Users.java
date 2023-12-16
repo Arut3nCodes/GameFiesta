@@ -28,7 +28,7 @@ public class Users implements UserDetails {
     private String permissions;
     @Indexed(unique = true)
     private String email;
-    
+    private Inbox inbox;
 
 
 

@@ -25,4 +25,8 @@ public class Tournament {
     private Bracket bracket;
     private Date date;
     private String status;
+    private String title;
+    private String shortDescription;
+    private String Description;
+    private List<String> invitedList;
 }
