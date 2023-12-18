@@ -1,5 +1,8 @@
 package com.example.gamefiesta.auth;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,11 +34,22 @@ public class AuthenticationController {
 
 
         @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticatioResponse> authenticate(
+    public ResponseEntity<ResponseCookie> authenticate(
         @ModelAttribute AuthenticationRequest request
     ){
-        // return ResponseEntity.ok().header("Authenticate", service.authenticate(request))
-        return ResponseEntity.ok(service.authenticate(request));
+
+        AuthenticatioResponse authRes = service.authenticate(request);
+        ResponseCookie springCookie = ResponseCookie.from("user-id", authRes.getToken())
+                                        .httpOnly(true)
+                                        .secure(true)
+                                        .path("/")
+                                        .maxAge(60)
+                                        .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, springCookie.toString())
+                .body(springCookie);
     }
 
 }

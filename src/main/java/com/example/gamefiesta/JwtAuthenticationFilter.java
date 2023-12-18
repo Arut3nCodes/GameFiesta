@@ -18,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+import jakarta.servlet.http.Cookie;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -29,18 +31,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String username;
+        final Cookie[] authHeader = request.getCookies();
+        String jwt = null;
+        String username = null;
+        Cookie cookie = null;
 
-        
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request, response);
-            return;
+        if(authHeader != null){
+         cookie = authHeader[0];
         }
-        jwt = authHeader.substring(7);
-        username = jwtService.extractUsername(jwt);
-        
+
+        if(cookie != null) {
+            jwt = cookie.getValue();
+            username = jwtService.extractUsername(jwt);
+        }
+
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if(jwtService.isTokenValid(jwt, userDetails)){
