@@ -1,13 +1,61 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-xmlns:sec="http://www.thymeleaf.org/extras/spring-security">>
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/indexCSS.css">
     <title>Document</title>
 </head>
 <body>
-    <span th:text="${#authentication.getPrincipal().getUsername}"></span>
-    asdasd
+    
+    
+    <div sec:authorize="isAuthenticated()">
+        <div sec:authentication="principal.username"></div>
+
+        <div class="collapsible-menu">
+            <input type="checkbox" id="menu">
+            <label for="menu">Menu</label>
+            <div class="menu-content">
+                <ul>
+                    <li><a href="#"></a>Moje Turnieje</li>
+                    <li><a href="#"></a>Moje drużyny</li>
+                    <li><a href="#"></a>Zmień hasło</li>
+                    <li><a href="#"></a>Wyloguj</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <div sec:authorize="isAnonymous()">
+        <form action="/auth/register">
+            <input type="submit" value="Rejestracja" />
+            
+        </form>
+        <form action="/auth/login">
+            <input type="submit" value="Logowanie">
+        </form>
+        </div>
+
+
+
+        <main>
+            <div id="myTournaments">
+dfghdfghdfghdfghdfgh
+            </div>
+            <div id="Tournaments">
+                    <div class="tournamentObject" th:each="tournament: ${tournaments}">
+                        <span th:text="${tournament.title}"></span>
+                        <span th:text="${tournament.shortDescription}"></span>
+                        <button th:onclick="javascript:window.location.href='/tournaments/[(${tournament._id})]'"></button>
+                    </div>
+                </div>
+            <div id="ads">casdasdasd</div>
+        </main>
+        
+    </div>
+
+
 </body>
 </html>

@@ -16,4 +16,5 @@ public class Team {
     private String leader;
     private String name;
     private List<String> players;
+    private List<String> invitedList;
 }
