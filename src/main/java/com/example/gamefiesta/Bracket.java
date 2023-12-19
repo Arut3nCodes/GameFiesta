@@ -8,4 +8,7 @@ public abstract class Bracket {
     private String _id;
     private List<String> listOfMatches;
     private String type;
+    public void generateBracket(){
+
+    }
 }
