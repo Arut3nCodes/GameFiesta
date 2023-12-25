@@ -49,70 +49,8 @@ public class WebCrontroller {
         return "myTeams";
     }
 
-    @PostMapping("/checkUser")
-    @ResponseBody
-    public Boolean checkUser(@RequestParam String username) {
-        Optional<Users> user = userRepository.findUsersByUsername(username);
-        return user.isPresent();
-    }
 
 
-    @PostMapping("/inviteToTeam")
-    @ResponseBody
-    public Boolean inviteToTeam(@RequestParam String username,@RequestParam String teamID) {
-        Optional<Users> userOptional = userRepository.findUsersByUsername(username);
 
-        if (userOptional.isPresent()) {
-            Users user = userOptional.get();
-            String userId = user.get_id();
-    
-            // Fetch the team from the database
-            Optional<Team> teamOptional = teamRepository.findById(teamID);
-    
-            if (teamOptional.isPresent()) {
-                Team team = teamOptional.get();
-    
-                // Check if the user is already a member of the team
-                boolean isAlreadyMember = team.getPlayers().contains(userId);
-    
-                if (!isAlreadyMember) {
-                    // Check if the invite already exists in the user's inbox
-                    boolean inviteExists = user.getInbox().stream()
-                            .anyMatch(invite -> "team".equals(invite.getType()) &&
-                                    teamID.equals(invite.getSource()) &&
-                                    userId.equals(invite.getDestination()));
-    
-                    if (!inviteExists) {
-                        // If the invite doesn't exist, create it and add it to the user's inbox
-                        Inbox invite = new Inbox("team", teamID, userId);
-                        user.getInbox().add(invite);
-    
-                        // Save the updated user with the new invite
-                        userRepository.save(user);
-    
-                        if (team.getInvitedList() == null) {
-                            team.setInvitedList(new ArrayList<>());
-                        }
-                        team.getInvitedList().add(userId);
-                        teamRepository.save(team);
-                        // Return true to indicate that the invite was successfully created and added
-                        return true;
-                    } else {
-                        // Return false to indicate that the invite already exists
-                        return false;
-                    }
-                } else {
-                    // Return false to indicate that the user is already a member of the team
-                    return false;
-                }
-            } else {
-                // Handle the case where the team doesn't exist
-                return false;
-            }
-        } else {
-            // Return false if the user doesn't exist
-            return false;
-        }
-    }
 
 }

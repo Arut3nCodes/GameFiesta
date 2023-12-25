@@ -12,7 +12,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     
     <div sec:authorize="isAuthenticated()">
         <div sec:authentication="principal.username"></div>
-
+        <div th:replace="/inviteInbox::inviteBtn"></div>
         <div class="collapsible-menu">
             <input type="checkbox" id="menu">
             <label for="menu">Menu</label>
@@ -58,4 +58,6 @@ dfghdfghdfghdfghdfgh
 
 
 </body>
+    <script sec:authorize="isAuthenticated()" src="/src/invite.js" ></script>
+
 </html>
