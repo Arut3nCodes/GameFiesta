@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/modal.css">
+    <title>Document</title>
+</head>
+<body>
+
+    <div id="teams">
+        <div class="teamObject" th:each="team: ${teams}">
+            <span th:text="${team.name}"></span>
+            <button th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Dodaj do drużyny</h2>
+            <input type="text" id="playerName" placeholder="Player Name">
+            <button onclick="addToTeam()">Dodaj</button>
+            <span id="hiddenTeamId"></span> 
+        </div>
+    </div>
+</body>
+
+<script>
+
+function openModal(teamId) {
+        document.getElementById('myModal').style.display = 'block';
+        document.getElementById('hiddenTeamId').value = teamId;
+    }
+
+    function closeModal() {
+        document.getElementById('myModal').style.display = 'none';
+    }
+
+    function addToTeam() {
+        var playerName = document.getElementById('playerName').value;
+        var teamId = document.getElementById('hiddenTeamId').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/checkUser', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText)
+
+                var xhrInv = new XMLHttpRequest();
+                xhrInv.open('POST', '/inviteToTeam', true);
+                xhrInv.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+                xhrInv.onload = function(){
+                    if(xhrInv.status === 200){
+                        console.log(xhrInv.responseText)
+                    }
+                }
+                xhrInv.send('username=' + encodeURIComponent(playerName) + '&teamID=' + encodeURIComponent(teamId));
+
+            }
+        };
+        xhr.send('username=' + encodeURIComponent(playerName));
+
+
+        closeModal();
+    }
+</script>
+</html>

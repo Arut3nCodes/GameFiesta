@@ -2,6 +2,7 @@ package com.example.gamefiesta;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -28,7 +29,7 @@ public class Users implements UserDetails {
     private String permissions;
     @Indexed(unique = true)
     private String email;
-    private Inbox inbox;
+    private List<Inbox> inbox;
 
 
 
@@ -38,6 +39,7 @@ public class Users implements UserDetails {
         this.permissions = permissions;
         this.email = email;
     }
+
 
 
 
