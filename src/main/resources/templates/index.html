@@ -6,6 +6,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/indexCSS.css">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
     
@@ -14,14 +15,14 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
         <div sec:authentication="principal.username"></div>
         <div th:replace="/inviteInbox::inviteBtn"></div>
         <div class="collapsible-menu">
-            <input type="checkbox" id="menu">
-            <label for="menu">Menu</label>
+            <input class="hid" type="checkbox" id="menu">
+            <label class="hid" for="menu">Menu</label>
             <div class="menu-content">
                 <ul>
-                    <li><a href="#"></a>Moje Turnieje</li>
-                    <li><a href="http://localhost:8080/myTeams"></a>Moje drużyny</li>
-                    <li><a href="#"></a>Zmień hasło</li>
-                    <li><a href="#"></a>Wyloguj</li>
+                    <li><a href="#">Moje Turnieje</a></li>
+                    <li><a href="http://localhost:8080/myTeams">Moje drużyny</a></li>
+                    <li><a href="#">Zmień hasło</a></li>
+                    <li><a href="#">Wyloguj</a></li>
                 </ul>
             </div>
         </div>
@@ -59,5 +60,14 @@ dfghdfghdfghdfghdfgh
 
 </body>
     <script sec:authorize="isAuthenticated()" src="/src/invite.js" ></script>
-
+    <script>
+        $(document).on('click', function (event) {
+            var menu = $('.menu-content');
+            var checkbox = $('#menu');
+            console.log(event.target.className)
+            if (!menu.is(event.target) && event.target.className !== 'hid' ) {
+                checkbox.prop('checked', false);
+            }
+        });
+    </script>
 </html>
