@@ -2,7 +2,6 @@ package com.example.gamefiesta.auth;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     
-    public AuthenticatioResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request) {
         var user = Users.builder()
             .username(request.getUsername())
             .email(request.getEmail())
@@ -30,20 +29,20 @@ public class AuthenticationService {
 
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticatioResponse
+        return AuthenticationResponse
         .builder()
         .token(jwtToken)
         .build();
     }
 
-    public AuthenticatioResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
         var user = repository.findUsersByUsername(request.getUsername()).orElseThrow();  // Zajac sie tym potem
         var jwtToken = jwtService.generateToken(user);
 
-        return AuthenticatioResponse
+        return AuthenticationResponse
         .builder()
         .token(jwtToken)
         .build();

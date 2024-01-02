@@ -16,13 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import jakarta.servlet.http.Cookie;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
+import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 
-
-
-
-
+import static org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive.*;
 
 
 @Configuration
@@ -43,7 +43,8 @@ public class SecurityConfiguration  {
     //     return http.build();
     // }
 
-
+    private static final ClearSiteDataHeaderWriter.Directive[] SOURCE =
+            {CACHE, COOKIES, STORAGE, EXECUTION_CONTEXTS};
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
       http.csrf(csrf -> csrf.disable())
@@ -54,6 +55,20 @@ public class SecurityConfiguration  {
                 .requestMatchers("/**").permitAll()
                 .anyRequest().authenticated()
           );
+
+        http
+          .logout(logout -> logout
+                .logoutUrl("/logout")
+                .addLogoutHandler((request, response, auth) -> {
+                    for (Cookie cookie : request.getCookies()) {
+                        String cookieName = cookie.getName();
+                        Cookie cookieToDelete = new Cookie(cookieName, null);
+                        cookieToDelete.setMaxAge(0);
+                        response.addCookie(cookieToDelete);
+                    }
+                })
+                          .logoutSuccessUrl("http://localhost:8080/")
+                );
       
    // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
       http.headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin()));
@@ -61,7 +76,7 @@ public class SecurityConfiguration  {
       http.authenticationProvider(authenticationProvider);
   
       http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-      
+
       return http.build();
     }
 
