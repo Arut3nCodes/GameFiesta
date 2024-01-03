@@ -68,8 +68,6 @@ public class InviteController {
                 // System.out.println(invitingUserr.get_id());
                 // System.out.println(team.getLeader()==invitingUserr.get_id());
                 // if (!isAlreadyMember && team.getLeader() == invitingUserr.get_id()) {
-
-
                 if (!isAlreadyMember){
                     boolean inviteExists = user.getInbox().stream()
                             .anyMatch(invite -> "team".equals(invite.getType()) &&
@@ -89,19 +87,10 @@ public class InviteController {
                         teamRepository.save(team);
                         // Return true to indicate that the invite was successfully created and added
                         return true;
-                    } else {
-                        // Return false to indicate that the invite already exists
-                        return false;
                     }
-                } else {
-                    // Return false to indicate that the user is already a member of the team
-                    return false;
                 }
-
-        } else {
-            // Return false if the user doesn't exist
-            return false;
-        }
+        } 
+        return false;
     }
 
 
@@ -152,6 +141,24 @@ public class InviteController {
     }
 
 
+    @PostMapping("/removeFromTeam")
+    @ResponseBody
+    public Boolean removeFromTeam(@RequestParam String playerID,@RequestParam String teamID) {
+        Optional<Team> teamOptional = teamRepository.findById(teamID);
+
+        if(teamOptional.isPresent()){
+            Team team = teamOptional.get();
+            if(team.getPlayers().contains(playerID)){
+                team.getPlayers().remove(playerID);
+                teamRepository.save(team);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+
+
     //Zwraca teraz tylko zaproszenia do druzyny
     @PostMapping("/getInvites")
     @ResponseBody
@@ -166,9 +173,6 @@ public class InviteController {
         .map(teamId -> teamRepository.findById(teamId).orElse(null))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
-
-
-        System.out.println(teamInvites);
 
         return teamInvites;
 

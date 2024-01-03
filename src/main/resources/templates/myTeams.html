@@ -14,6 +14,8 @@
 </head>
 <body>
 
+
+
     <div id="teams">
         <div class="teamObject" th:each="team,iterator: ${teams}">
             <span th:text="${team.name}"></span>
@@ -23,6 +25,7 @@
             <div th:id="collapse+${iterator.index}" class="panel-collapse collapse">
                 <ul class="list-group" th:each="player: ${team.players}">
                     <li class="list-group-item" th:text="${player}"></li>
+                    <button th:if="${team.leader == #authentication.principal._id}" th:attr="onclick=|removeFromTeam('${player}','${team._id}')|" >Del</button>
                 </ul>
             </div>
         </div>
@@ -35,7 +38,7 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>Dodaj do drużyny</h2>
             <input type="text" id="playerName" placeholder="Player Name">
-            <button onclick="addToTeam()">Dodaj</button>
+            <button style="background: url(/images/RedX.png)" onclick="addToTeam()">Dodaj</button>
             <span id="hiddenTeamId"></span> 
         </div>
     </div>
@@ -50,6 +53,22 @@ function openModal(teamId) {
 
     function closeModal() {
         document.getElementById('myModal').style.display = 'none';
+    }
+
+
+    function removeFromTeam(player,team){
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/removeFromTeam', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText); 
+            } else {
+                console.log('Error: ' + xhr.responseText);
+            }
+        };
+        xhr.send('teamID=' + encodeURIComponent(team) + '&playerID=' + encodeURIComponent(player));
+        console.log(player,team)
     }
 
     function addToTeam() {
