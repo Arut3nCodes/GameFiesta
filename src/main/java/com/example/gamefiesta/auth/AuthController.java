@@ -1,6 +1,7 @@
 package com.example.gamefiesta.auth;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,16 +19,21 @@ import org.springframework.web.servlet.view.RedirectView;
 public class AuthController {
 
     @GetMapping("/register")
-    public String registerForm(Model model) {
+    public String registerForm(HttpServletRequest request, Model model) {
         Users user = new Users();
         model.addAttribute("user", user);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //System.out.println(authentication);
+        if (request.getCookies() != null) {
+            return "redirect:/";
+        }
         return "register";
     }
 
     @GetMapping("/login")
-    public String registerForm() {
+    public String registerForm(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            return "redirect:/";
+        }
         return "login";
     }
 
