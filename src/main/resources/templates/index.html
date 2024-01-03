@@ -9,8 +9,6 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
-    
-    
     <div sec:authorize="isAuthenticated()">
         <div sec:authentication="principal.username"></div>
         <div th:replace="/inviteInbox::inviteBtn"></div>
@@ -22,7 +20,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
                     <li><a href="#">Moje Turnieje</a></li>
                     <li><a href="http://localhost:8080/myTeams">Moje drużyny</a></li>
                     <li><a href="#">Zmień hasło</a></li>
-                    <li><a href="#">Wyloguj</a></li>
+                    <li><a href="/logout">Wyloguj</a></li>
                 </ul>
             </div>
         </div>

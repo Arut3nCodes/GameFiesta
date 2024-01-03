@@ -1,19 +1,13 @@
 package com.example.gamefiesta.auth;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.gamefiesta.Users;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +19,7 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticatioResponse> register(
+    public ResponseEntity<AuthenticationResponse> register(
         @ModelAttribute RegisterRequest request
     ){
         return ResponseEntity.ok(service.register(request));
@@ -34,22 +28,22 @@ public class AuthenticationController {
 
 
         @PostMapping("/authenticate")
-    public ResponseEntity<ResponseCookie> authenticate(
+    public ResponseEntity<String> authenticate(
         @ModelAttribute AuthenticationRequest request
-    ){
+    ) {
 
-        AuthenticatioResponse authRes = service.authenticate(request);
-        ResponseCookie springCookie = ResponseCookie.from("user-id", authRes.getToken())
-                                        .httpOnly(true)
-                                        .secure(true)
-                                        .path("/")
-                                        .maxAge(60)
-                                        .build();
+            AuthenticationResponse authRes = service.authenticate(request);
+            ResponseCookie springCookie = ResponseCookie.from("user-id", authRes.getToken())
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .maxAge(3600)
+                    .build();
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, springCookie.toString())
-                .body(springCookie);
-    }
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "http://localhost:8080/");
+            headers.add(HttpHeaders.SET_COOKIE, springCookie.toString());
+            return new ResponseEntity<String>(headers, HttpStatus.FOUND);
+        }
 
 }

@@ -41,8 +41,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if(cookie != null) {
-            jwt = cookie.getValue();
-            username = jwtService.extractUsername(jwt);
+            try {
+                jwt = cookie.getValue();
+                username = jwtService.extractUsername(jwt);
+            }catch(Exception e){
+                for (Cookie cookiec : request.getCookies()) {
+                    String cookieName = cookiec.getName();
+                    Cookie cookieToDelete = new Cookie(cookieName, null);
+                    cookieToDelete.setMaxAge(0);
+                    response.addCookie(cookieToDelete);
+                }
+            }
         }
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){

@@ -29,4 +29,6 @@ public class Tournament {
     private String shortDescription;
     private String Description;
     private List<String> invitedList;
+
+
 }
