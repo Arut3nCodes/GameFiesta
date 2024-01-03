@@ -1,6 +1,7 @@
 package com.example.gamefiesta.auth;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,9 +37,14 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        try{
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
+        }catch(BadCredentialsException e){
+            return null;
+        }
+
         var user = repository.findUsersByUsername(request.getUsername()).orElseThrow();  // Zajac sie tym potem
         var jwtToken = jwtService.generateToken(user);
 

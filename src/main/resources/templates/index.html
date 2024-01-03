@@ -11,7 +11,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
     <div sec:authorize="isAuthenticated()">
         <div sec:authentication="principal.username"></div>
-        <div th:replace="/inviteInbox::inviteBtn"></div>
+        <div th:insert="/inviteInbox.html::inviteBtn"></div>
         <div class="collapsible-menu">
             <input class="hid" type="checkbox" id="menu">
             <label class="hid" for="menu">Menu</label>
