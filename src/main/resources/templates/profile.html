@@ -34,6 +34,10 @@
             <button class="nav-link" id="tournaments-tab" data-bs-toggle="tab" data-bs-target="#tournaments" type="button"
                 role="tab" aria-controls="tournaments" aria-selected="false">Turnieje</button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="add-tournament-tab" data-bs-toggle="tab" data-bs-target="#add-tournament" type="button"
+                role="tab" aria-controls="add-tournament" aria-selected="false">Stwórz turniej</button>
+        </li>
     </ul>
 
     <!-- Tab panes -->
@@ -46,6 +50,7 @@
             </form>
 
         </div>
+        <button onclick="openModal2()">Stwórz drużynę</button>
         <div class="tab-pane" id="teams" role="tabpanel" aria-labelledby="teams-tab">        
         <div class="teamObject" th:each="team,iterator: ${teams}">
             <span th:text="${team.name}"></span>
@@ -61,6 +66,7 @@
             </div>
         </div></div>
         <div class="tab-pane" id="tournaments" role="tabpanel" aria-labelledby="tournaments-tab">turnieje</div>
+        <div class="tab-pane" id="add-tournament" role="tabpanel" aria-labelledby="add-tournament-tab">Tu formularz tworzenia turnieju</div>
     </div>
 
     
@@ -69,14 +75,24 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>Dodaj do drużyny</h2>
-            <input type="text" id="playerName" placeholder="Player Name">
+            <input type="text" id="playerName" placeholder="Nazwa użytkownika">
             <button style="background: url(/images/RedX.png)" onclick="addToTeam()">Dodaj</button>
             <span id="hiddenTeamId"></span>
         </div>
     </div>
+
+
+    <div id="myModal2" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal2()">&times;</span>
+            <h2>Stwórz drużynę</h2>
+            <input type="text" id="teamName" placeholder="Nazwa drużyny">
+            <button onclick="addTeam()">Dodaj</button>
+        </div>
+    </div>
 </body>
 
-<script>
+<script th:inline="javascript">
     
     var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
     triggerTabList.forEach(function (triggerEl) {
@@ -98,7 +114,32 @@
     }
 
 
+    function openModal2() {
+        document.getElementById('myModal2').style.display = 'block';
+    }
 
+    function closeModal2() {
+        document.getElementById('myModal2').style.display = 'none';
+    }
+
+    function addTeam(){
+        /*[# sec:authorize="isAuthenticated()"]*/
+        const loginUserName = /*[[${#authentication.principal.username}]]*/ 'admin'
+        /*[/]*/
+
+        let teamName = document.getElementById("teamName").value
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/addTeam', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText);
+            } else {
+                console.log('Error: ' + xhr.responseText);
+            }
+        };
+        xhr.send('teamName=' + encodeURIComponent(teamName) + '&user=' + encodeURIComponent(loginUserName));
+    }
 
 
     function removeFromTeam(player, team) {
@@ -113,7 +154,8 @@
             }
         };
         xhr.send('teamID=' + encodeURIComponent(team) + '&playerID=' + encodeURIComponent(player));
-        console.log(player, team)
+
+        closeModal2();
     }
 
     function addToTeam() {

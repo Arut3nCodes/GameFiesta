@@ -3,6 +3,8 @@ package com.example.gamefiesta;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Optional;
+
+import org.springframework.boot.context.config.ConfigData.Option;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("/")
@@ -177,6 +181,24 @@ public class InviteController {
         return teamInvites;
 
     }
+
+    @PostMapping("/addTeam")
+    @ResponseBody
+    public Boolean addTeam(@RequestParam String teamName, @RequestParam String user) {
+        System.out.println(user);
+        System.out.println(teamName);
+        Optional<Team> teamOptional = teamRepository.findTeamByName(teamName);
+        Optional<Users> userOptional = userRepository.findUsersByUsername(user);
+        if(!teamOptional.isPresent() && userOptional.isPresent()){
+            ArrayList<String> players = new ArrayList<>();
+            players.add(userOptional.get().get_id());
+            Team newTeam = new Team(null, userOptional.get().get_id(), teamName, players, new ArrayList<String>());
+            teamRepository.insert(newTeam);
+            return true;
+        }
+        return false;
+    }
+    
 
 
 }
