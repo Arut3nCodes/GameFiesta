@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+    <script src="/src/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/styles/bootstrap.min.css">
+    <link rel="stylesheet" href="/styles/modal.css">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+                role="tab" aria-controls="profile" aria-selected="false">Profil</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="teams-tab" data-bs-toggle="tab" data-bs-target="#teams" type="button"
+                role="tab" aria-controls="teams" aria-selected="true">Drużyny</button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tournaments-tab" data-bs-toggle="tab" data-bs-target="#tournaments" type="button"
+                role="tab" aria-controls="tournaments" aria-selected="false">Turnieje</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="add-tournament-tab" data-bs-toggle="tab" data-bs-target="#add-tournament" type="button"
+                role="tab" aria-controls="add-tournament" aria-selected="false">Stwórz turniej</button>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="profile" role="tabpanel" aria-labelledby="profile-tab">Profil
+            <form method="post" role="form" th:action="@{/auth/changePassword}">
+                <input type="password" name="oldPassword">
+                <input type="password" name="newPassword">
+                <input type="submit" value="Wyslij">
+            </form>
+
+        </div>
+        <button onclick="openModal2()">Stwórz drużynę</button>
+        <div class="tab-pane" id="teams" role="tabpanel" aria-labelledby="teams-tab">        
+        <div class="teamObject" th:each="team,iterator: ${teams}">
+            <span th:text="${team.name}"></span>
+            <button th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
+            <div class="panel panel-default"></div>
+            <a data-bs-toggle="collapse" aria-expanded="false" th:href="@{'#collapse'+${iterator.index}}">Pokaż liste członków drużyny</a>
+            <div th:id="collapse+${iterator.index}" class="panel-collapse collapse">
+                <ul class="list-group" th:each="player: ${team.players}">
+                    <li class="list-group-item" th:text="${player}"></li>
+                    <button th:if="${team.leader == #authentication.principal._id}"
+                        th:attr="onclick=|removeFromTeam('${player}','${team._id}')|">Del</button>
+                </ul>
+            </div>
+        </div></div>
+        <div class="tab-pane" id="tournaments" role="tabpanel" aria-labelledby="tournaments-tab">turnieje</div>
+        <div class="tab-pane" id="add-tournament" role="tabpanel" aria-labelledby="add-tournament-tab">Tu formularz tworzenia turnieju</div>
+    </div>
+
+    
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Dodaj do drużyny</h2>
+            <input type="text" id="playerName" placeholder="Nazwa użytkownika">
+            <button style="background: url(/images/RedX.png)" onclick="addToTeam()">Dodaj</button>
+            <span id="hiddenTeamId"></span>
+        </div>
+    </div>
+
+
+    <div id="myModal2" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal2()">&times;</span>
+            <h2>Stwórz drużynę</h2>
+            <input type="text" id="teamName" placeholder="Nazwa drużyny">
+            <button onclick="addTeam()">Dodaj</button>
+        </div>
+    </div>
+</body>
+
+<script th:inline="javascript">
+    
+    var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+    triggerTabList.forEach(function (triggerEl) {
+        var tabTrigger = new bootstrap.Tab(triggerEl)
+
+        triggerEl.addEventListener('click', function (event) {
+            event.preventDefault()
+            tabTrigger.show()
+        })
+    })
+
+    function openModal(teamId) {
+        document.getElementById('myModal').style.display = 'block';
+        document.getElementById('hiddenTeamId').value = teamId;
+    }
+
+    function closeModal() {
+        document.getElementById('myModal').style.display = 'none';
+    }
+
+
+    function openModal2() {
+        document.getElementById('myModal2').style.display = 'block';
+    }
+
+    function closeModal2() {
+        document.getElementById('myModal2').style.display = 'none';
+    }
+
+    function addTeam(){
+        /*[# sec:authorize="isAuthenticated()"]*/
+        const loginUserName = /*[[${#authentication.principal.username}]]*/ 'admin'
+        /*[/]*/
+
+        let teamName = document.getElementById("teamName").value
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/addTeam', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText);
+            } else {
+                console.log('Error: ' + xhr.responseText);
+            }
+        };
+        xhr.send('teamName=' + encodeURIComponent(teamName) + '&user=' + encodeURIComponent(loginUserName));
+    }
+
+
+    function removeFromTeam(player, team) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/removeFromTeam', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText);
+            } else {
+                console.log('Error: ' + xhr.responseText);
+            }
+        };
+        xhr.send('teamID=' + encodeURIComponent(team) + '&playerID=' + encodeURIComponent(player));
+
+        closeModal2();
+    }
+
+    function addToTeam() {
+        var playerName = document.getElementById('playerName').value;
+        var teamId = document.getElementById('hiddenTeamId').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/checkUser', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText)
+
+                var xhrInv = new XMLHttpRequest();
+                xhrInv.open('POST', '/inviteToTeam', true);
+                xhrInv.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+                xhrInv.onload = function () {
+                    if (xhrInv.status === 200) {
+                        console.log(xhrInv.responseText)
+                    }
+                }
+                xhrInv.send('username=' + encodeURIComponent(playerName) + '&teamID=' + encodeURIComponent(teamId));
+
+            }
+        };
+        xhr.send('username=' + encodeURIComponent(playerName));
+
+
+        closeModal();
+    }
+</script>
+
+</html>
