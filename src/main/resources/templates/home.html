@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/styles/homeCSS.css">
+</head>
+<body>
+    <div class="box">
+        <header>
+            <nav class="topnav">
+                <ul>
+                    <li><a href="#">Preview</a></li>
+                    <li><a href="#">Preview</a></li>
+                    <li><a href="#">Preview</a></li>
+                </ul>
+            </nav>
+
+            <div class="dropdown">
+                <div class="usermenu">
+                    <div sec:authorize="isAnonymous()">
+                        <img src="" alt="IMG">
+                        <p class="usernameText">Guest</p>
+                    </div>
+
+                    <div sec:authorize="isAuthenticated()">
+                        <img src="" alt="IMG">
+                        <p class="usernameText"><div sec:authentication="principal.username"></div></p>
+                    </div>
+                </div>
+                <div class="dropdown-content">
+                    <div sec:authorize="isAnonymous()">
+                        <a th:href="@{/auth/login}">Log In</a>
+                        <a th:href="@{/auth/register}">Register</a>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <a href="#">Moje Turnieje</a>
+                        <a href="http://localhost:8080/myTeams">Moje drużyny</a>
+                        <a href="#">Zmień hasło</a>
+                        <a href="/logout">Wyloguj</a>
+                    </div>
+                </div>
+            </div>
+
+
+        </header>
+        <div class="contentsec">
+            <div class="leftsec">leftsec</div>
+            <div class="centersec">middlesec</div>
+            <div class="rightsec">rightsec</div>
+        </div>
+        <footer>
+        </footer>
+    </div>
+</body>
+</html>
