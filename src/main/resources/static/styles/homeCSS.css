@@ -1,7 +1,7 @@
-
 html, body {
     margin: 0;
     padding: 0;
+    background-color: #3F48CC;
 }
 
 .box{
@@ -9,8 +9,9 @@ html, body {
     font-family: system-ui;
     flex-direction: column;
     background-color: #3F48CC;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     max-width: 100%;
     min-width: 1280px;
     min-height: 720px;
@@ -64,36 +65,7 @@ header {
     align-content: center;
 }
 
-.leftsec {
-    background-color: whitesmoke;
-    border-radius: 10px;
-    min-width: 128px;
-    width: 10vw;
-    box-sizing: border-box;
-    margin: 1vw;
-    margin-left: 2.5vw;
-}
 
-.centersec{
-    display: flex;
-    border-radius: 10px;
-    justify-content: center;
-    align-content: center;
-    background-color: whitesmoke;
-    width: 60vw;
-    min-width: 768px;
-    margin: 1vw;
-}
-
-.rightsec {
-    background-color: whitesmoke;
-    border-radius: 10px;
-    min-width: 128px;
-    width: 10vw;
-    margin: 1vw;
-    margin-right: 2.5vw;
-
-}
 
 .usermenu {
     display: inline-flex;
@@ -164,3 +136,65 @@ header {
     background-color: #f1f1f1;
 }
 
+.leftsec {
+    border-radius: 10px;
+    min-width: 128px;
+    width: 10vw;
+    box-sizing: border-box;
+    margin: 1vw;
+    margin-left: 2.5vw;
+}
+
+.centersec{
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #F8F8FF;
+    width: 60vw;
+    min-width: 768px;
+    margin: 1vw;
+}
+
+.centersec h1{
+
+
+    color: #3F48CC;
+    text-align: center;
+    font-size: 4em;
+    margin-bottom: 10px;
+}
+
+.centersec .header{
+    margin-top: 5vh;
+    width: 30vw;
+}
+
+.centersec .esports{
+    border-radius: 25px;
+    width: 50vw;
+    margin-bottom: 20px;
+}
+
+.centersec p{
+    border: 1px solid #3F48CC;
+    border-radius: 10px;
+    color: darkblue;
+    font-size: large;
+    padding: 10px;
+    margin: 10px 300px 20px 300px;
+    text-align: center;
+}
+
+.rightsec {
+    border-radius: 10px;
+    min-width: 128px;
+    width: 10vw;
+    margin: 1vw;
+    margin-right: 2.5vw;
+}
+
+.promoimg {
+    width: 100%;
+}

@@ -1,57 +1,58 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
+
     <title>Title</title>
     <link rel="stylesheet" href="/styles/homeCSS.css">
 </head>
 <body>
-    <div class="box">
-        <header>
-            <nav class="topnav">
-                <ul>
-                    <li><a href="#">Preview</a></li>
-                    <li><a href="#">Preview</a></li>
-                    <li><a href="#">Preview</a></li>
-                </ul>
-            </nav>
+<div class="box">
+    <header>
+        <nav class="topnav">
+            <ul>
+                <li><a href="#">Preview</a></li>
+                <li><a href="#">Preview</a></li>
+                <li><a href="#">Preview</a></li>
+            </ul>
+        </nav>
 
-            <div class="dropdown">
-                <div class="usermenu">
-                    <div sec:authorize="isAnonymous()">
-                        <img src="" alt="IMG">
-                        <p class="usernameText">Guest</p>
-                    </div>
+        <div class="dropdown">
+            <div class="usermenu">
+                <div>
+                    <img src="" alt="IMG">
+                    <p class="usernameText">Guest</p>
+                </div>
 
-                    <div sec:authorize="isAuthenticated()">
-                        <img src="" alt="IMG">
-                        <p class="usernameText"><div sec:authentication="principal.username"></div></p>
-                    </div>
-                </div>
-                <div class="dropdown-content">
-                    <div sec:authorize="isAnonymous()">
-                        <a th:href="@{/auth/login}">Log In</a>
-                        <a th:href="@{/auth/register}">Register</a>
-                    </div>
-                    <div sec:authorize="isAuthenticated()">
-                        <a href="#">Moje Turnieje</a>
-                        <a href="http://localhost:8080/myTeams">Moje drużyny</a>
-                        <a href="#">Zmień hasło</a>
-                        <a href="/logout">Wyloguj</a>
-                    </div>
-                </div>
+
             </div>
+            <div class="dropdown-content">
+                <div>
+                    <a href="/auth/login">Log In</a>
+                    <a href="/auth/register">Register</a>
+                </div>
 
-
-        </header>
-        <div class="contentsec">
-            <div class="leftsec">leftsec</div>
-            <div class="centersec">middlesec</div>
-            <div class="rightsec">rightsec</div>
+            </div>
         </div>
-        <footer>
-        </footer>
+
+
+    </header>
+    <div class="contentsec">
+        <div class="leftsec">
+            <img class="promoimg" src="/src/mnr.jpg">
+        </div>
+        <div class="centersec">
+            <h1>Witaj na GameFiesta!</h1>
+            <p>Witaj na naszej platformie turniejowej, gdzie pasja spotyka się z rywalizacją! Zapewniamy Ci niezapomniane doświadczenia w świecie turniejów dla graczy o różnym poziomie umiejętności. Przygotuj się na ekscytujące pojedynki, uczestnicząc w różnorodnych turniejach, które oferujemy na naszej platformie. Nasze dedykowane rozwiązania sprawiają, że przeglądanie, rejestracja i uczestnictwo w turniejach staje się przyjemnym i intuicyjnym procesem. Wygraj atrakcyjne nagrody, rozwijaj swoje umiejętności i poznawaj pasjonujących ludzi z całego świata. Dołącz do nas już teraz i weź udział w pasjonujących turniejach, które zapewnią Ci niesamowite przeżycia i emocje!</p>
+            <img class="esports" src="/src/esports.jpg">
+        </div>
+        <div class="rightsec">
+            <img class="promoimg" src="/src/mnr.jpg">
+        </div>
     </div>
+    <footer>
+    </footer>
+</div>
 </body>
 </html>
