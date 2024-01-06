@@ -3,6 +3,8 @@ package com.example.gamefiesta;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Optional;
+
+import org.springframework.boot.context.config.ConfigData.Option;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("/")
@@ -68,8 +72,6 @@ public class InviteController {
                 // System.out.println(invitingUserr.get_id());
                 // System.out.println(team.getLeader()==invitingUserr.get_id());
                 // if (!isAlreadyMember && team.getLeader() == invitingUserr.get_id()) {
-
-
                 if (!isAlreadyMember){
                     boolean inviteExists = user.getInbox().stream()
                             .anyMatch(invite -> "team".equals(invite.getType()) &&
@@ -89,19 +91,10 @@ public class InviteController {
                         teamRepository.save(team);
                         // Return true to indicate that the invite was successfully created and added
                         return true;
-                    } else {
-                        // Return false to indicate that the invite already exists
-                        return false;
                     }
-                } else {
-                    // Return false to indicate that the user is already a member of the team
-                    return false;
                 }
-
-        } else {
-            // Return false if the user doesn't exist
-            return false;
-        }
+        } 
+        return false;
     }
 
 
@@ -152,6 +145,24 @@ public class InviteController {
     }
 
 
+    @PostMapping("/removeFromTeam")
+    @ResponseBody
+    public Boolean removeFromTeam(@RequestParam String playerID,@RequestParam String teamID) {
+        Optional<Team> teamOptional = teamRepository.findById(teamID);
+
+        if(teamOptional.isPresent()){
+            Team team = teamOptional.get();
+            if(team.getPlayers().contains(playerID)){
+                team.getPlayers().remove(playerID);
+                teamRepository.save(team);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+
+
     //Zwraca teraz tylko zaproszenia do druzyny
     @PostMapping("/getInvites")
     @ResponseBody
@@ -167,12 +178,27 @@ public class InviteController {
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
 
-
-        System.out.println(teamInvites);
-
         return teamInvites;
 
     }
+
+    @PostMapping("/addTeam")
+    @ResponseBody
+    public Boolean addTeam(@RequestParam String teamName, @RequestParam String user) {
+        System.out.println(user);
+        System.out.println(teamName);
+        Optional<Team> teamOptional = teamRepository.findTeamByName(teamName);
+        Optional<Users> userOptional = userRepository.findUsersByUsername(user);
+        if(!teamOptional.isPresent() && userOptional.isPresent()){
+            ArrayList<String> players = new ArrayList<>();
+            players.add(userOptional.get().get_id());
+            Team newTeam = new Team(null, userOptional.get().get_id(), teamName, players, new ArrayList<String>());
+            teamRepository.insert(newTeam);
+            return true;
+        }
+        return false;
+    }
+    
 
 
 }

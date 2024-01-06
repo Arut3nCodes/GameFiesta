@@ -11,15 +11,15 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
     <div sec:authorize="isAuthenticated()">
         <div sec:authentication="principal.username"></div>
-        <div th:replace="/inviteInbox::inviteBtn"></div>
+        <div th:insert="/inviteInbox.html::inviteBtn"></div>
         <div class="collapsible-menu">
             <input class="hid" type="checkbox" id="menu">
             <label class="hid" for="menu">Menu</label>
             <div class="menu-content">
                 <ul>
-                    <li><a href="#">Moje Turnieje</a></li>
-                    <li><a href="/myTeams">Moje drużyny</a></li>
-                    <li><a href="#">Zmień hasło</a></li>
+                    <li><a href="http://localhost:8080/profile">Moje Turnieje</a></li>
+                    <li><a href="http://localhost:8080/profile">Moje drużyny</a></li>
+                    <li><a href="http://localhost:8080/profile">Zmień hasło</a></li>
                     <li><a href="/logout">Wyloguj</a></li>
                 </ul>
             </div>
