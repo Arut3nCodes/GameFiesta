@@ -1,4 +1,16 @@
 
+function toggleContent() {
+    const invitesContainer = document.querySelector('.invites-container');
+    const invitesList = invitesContainer.querySelector('.invites-list');
+
+    invitesContainer.classList.toggle('active');
+
+    if (invitesContainer.classList.contains('active')) {
+        fetchInvites();
+    } else {
+        invitesList.innerHTML = '';
+    }
+}
 
 function fetchInvites() {
     var xhr = new XMLHttpRequest();

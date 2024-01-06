@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+
+    <title>GameFiesta - Home</title>
+    <link rel="stylesheet" href="/styles/homeCSS.css">
+    <link rel="stylesheet" href="/styles/inviteInboxCSS.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="box">
+    <header>
+        <nav class="topnav">
+            <ul>
+                <li><a href="#">Preview</a></li>
+                <li><a href="#">Preview</a></li>
+                <li><a href="#">Preview</a></li>
+            </ul>
+        </nav>
+        <div class="right-header-content">
+            <div sec:authorize="isAuthenticated()">
+                <div th:replace="/inviteInbox::inviteBtn"></div>
+            </div>
+            <div class="dropdown">
+                <div class="usermenu">
+                    <div sec:authorize="isAnonymous()">
+                        <p class="usernameText">Guest</p>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <p class="usernameText"><div sec:authentication="principal.username"></div></p>
+                    </div>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <div class="dropdown-content">
+                        <a href="/auth/login">Log In</a>
+                        <a href="/auth/register">Register</a>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <div class="dropdown-content">
+                        <a href="#">Moje Turnieje</a>
+                        <a href="/myTeams">Moje drużyny</a>
+                        <a href="#">Zmień hasło</a>
+                        <a href="/logout">Wyloguj</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </header>
+    <div class="contentsec">
+        <div class="leftsec">
+            <img class="promoimg" src="/src/mnr.jpg">
+        </div>
+        <div class="centersec">
+            <h1>Witaj na GameFiesta!</h1>
+            <p>Witaj na naszej platformie turniejowej, gdzie pasja spotyka się z rywalizacją! Zapewniamy Ci niezapomniane doświadczenia w świecie turniejów dla graczy o różnym poziomie umiejętności. Przygotuj się na ekscytujące pojedynki, uczestnicząc w różnorodnych turniejach, które oferujemy na naszej platformie. Nasze dedykowane rozwiązania sprawiają, że przeglądanie, rejestracja i uczestnictwo w turniejach staje się przyjemnym i intuicyjnym procesem. Wygraj atrakcyjne nagrody, rozwijaj swoje umiejętności i poznawaj pasjonujących ludzi z całego świata. Dołącz do nas już teraz i weź udział w pasjonujących turniejach, które zapewnią Ci niesamowite przeżycia i emocje!</p>
+            <img class="esports" src="/src/esports.jpg">
+        </div>
+        <div class="rightsec">
+            <img class="promoimg" src="/src/mnr.jpg">
+        </div>
+    </div>
+    <footer>
+    </footer>
+</div>
+</body>
+    <script sec:authorize="isAuthenticated()" src="/src/invite.js" ></script>
+    <script>
+        $(document).on('click', function (event) {
+            var menu = $('.menu-content');
+            var checkbox = $('#menu');
+            console.log(event.target.className)
+            if (!menu.is(event.target) && event.target.className !== 'hid' ) {
+                checkbox.prop('checked', false);
+            }
+        });
+    </script>
+</html>
