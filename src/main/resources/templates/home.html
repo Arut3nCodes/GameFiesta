@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
 
-    <title>Title</title>
+    <title>GameFiesta - Home</title>
     <link rel="stylesheet" href="/styles/homeCSS.css">
+    <link rel="stylesheet" href="/styles/inviteInboxCSS.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 <div class="box">
@@ -17,22 +20,33 @@
                 <li><a href="#">Preview</a></li>
             </ul>
         </nav>
-
-        <div class="dropdown">
-            <div class="usermenu">
-                <div>
-                    <img src="" alt="IMG">
-                    <p class="usernameText">Guest</p>
-                </div>
-
-
+        <div class="right-header-content">
+            <div sec:authorize="isAuthenticated()">
+                <div th:replace="/inviteInbox::inviteBtn"></div>
             </div>
-            <div class="dropdown-content">
-                <div>
-                    <a href="/auth/login">Log In</a>
-                    <a href="/auth/register">Register</a>
+            <div class="dropdown">
+                <div class="usermenu">
+                    <div sec:authorize="isAnonymous()">
+                        <p class="usernameText">Guest</p>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <p class="usernameText"><div sec:authentication="principal.username"></div></p>
+                    </div>
                 </div>
-
+                <div sec:authorize="isAnonymous()">
+                    <div class="dropdown-content">
+                        <a href="/auth/login">Log In</a>
+                        <a href="/auth/register">Register</a>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <div class="dropdown-content">
+                        <a href="#">Moje Turnieje</a>
+                        <a href="/myTeams">Moje drużyny</a>
+                        <a href="#">Zmień hasło</a>
+                        <a href="/logout">Wyloguj</a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -55,4 +69,15 @@
     </footer>
 </div>
 </body>
+    <script sec:authorize="isAuthenticated()" src="/src/invite.js" ></script>
+    <script>
+        $(document).on('click', function (event) {
+            var menu = $('.menu-content');
+            var checkbox = $('#menu');
+            console.log(event.target.className)
+            if (!menu.is(event.target) && event.target.className !== 'hid' ) {
+                checkbox.prop('checked', false);
+            }
+        });
+    </script>
 </html>
