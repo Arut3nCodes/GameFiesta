@@ -72,7 +72,7 @@ public class InviteController {
                 // System.out.println(invitingUserr.get_id());
                 // System.out.println(team.getLeader()==invitingUserr.get_id());
                 // if (!isAlreadyMember && team.getLeader() == invitingUserr.get_id()) {
-                if (!isAlreadyMember){
+                if (!isAlreadyMember && team.getLeader().equals(invitingUserr.get_id())){
                     boolean inviteExists = user.getInbox().stream()
                             .anyMatch(invite -> "team".equals(invite.getType()) &&
                                     teamID.equals(invite.getSource()) &&
