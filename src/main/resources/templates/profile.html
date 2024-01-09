@@ -50,11 +50,15 @@
             </form>
 
         </div>
+        <div class="tab-pane" id="teams" role="tabpanel" aria-labelledby="teams-tab">    
         <button onclick="openModal2()">Stwórz drużynę</button>
-        <div class="tab-pane" id="teams" role="tabpanel" aria-labelledby="teams-tab">        
+
         <div class="teamObject" th:each="team,iterator: ${teams}">
+
             <span th:text="${team.name}"></span>
-            <button th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
+
+            <button th:if="${team.leader == #authentication.principal._id}" th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
+
             <div class="panel panel-default"></div>
             <a data-bs-toggle="collapse" aria-expanded="false" th:href="@{'#collapse'+${iterator.index}}">Pokaż liste członków drużyny</a>
             <div th:id="collapse+${iterator.index}" class="panel-collapse collapse">
