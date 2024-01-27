@@ -1,5 +1,6 @@
 package com.example.gamefiesta;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.List;
@@ -38,6 +39,7 @@ public class Users implements UserDetails {
         this.password = password;
         this.permissions = permissions;
         this.email = email;
+        this.inbox = new ArrayList<Inbox>();
     }
 
 

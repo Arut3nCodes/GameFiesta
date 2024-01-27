@@ -14,6 +14,7 @@
     <script src="/src/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/modal.css">
+    <link rel="stylesheet" href="/styles/team.css">
     <title>Document</title>
 </head>
 
@@ -52,7 +53,7 @@
         </div>
         <div class="tab-pane" id="teams" role="tabpanel" aria-labelledby="teams-tab">    
         <button onclick="openModal2()">Stwórz drużynę</button>
-
+                
         <div class="teamObject" th:each="team,iterator: ${teams}">
 
             <span th:text="${team.name}"></span>
@@ -60,13 +61,21 @@
             <button th:if="${team.leader == #authentication.principal._id}" th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
 
             <div class="panel panel-default"></div>
-            <a data-bs-toggle="collapse" aria-expanded="false" th:href="@{'#collapse'+${iterator.index}}">Pokaż liste członków drużyny</a>
+            <a data-bs-toggle="collapse" class="showTeamMembers" aria-expanded="false" th:href="@{'#collapse'+${iterator.index}}">Pokaż liste członków drużyny</a>
             <div th:id="collapse+${iterator.index}" class="panel-collapse collapse">
                 <ul class="list-group" th:each="player: ${team.players}">
                     <li class="list-group-item" th:text="${player}"></li>
                     <button th:if="${team.leader == #authentication.principal._id}"
                         th:attr="onclick=|removeFromTeam('${player}','${team._id}')|">Del</button>
                 </ul>
+                <ul class="list-group" th:each="player: ${team.invitedList}">
+                    <li class="list-group-item" th:text="${player} + '      - Zaproszenie'"></li>
+                    <button th:if="${team.leader == #authentication.principal._id}"
+                        th:attr="onclick=|removeInvitationFromTeam('${player}','${team._id}')|">Del</button>
+                </ul>
+
+
+
             </div>
         </div></div>
         <div class="tab-pane" id="tournaments" role="tabpanel" aria-labelledby="tournaments-tab">turnieje</div>
@@ -161,6 +170,31 @@
 
         closeModal2();
     }
+
+
+
+    function removeInvitationFromTeam(player, team) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/removeInvitationFromTeam', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText);
+                if(xhr.responseText=="true"){
+                    
+                }
+            } else {
+                console.log('Error: ' + xhr.responseText);
+            }
+        };
+        xhr.send('teamID=' + encodeURIComponent(team) + '&playerID=' + encodeURIComponent(player));
+
+        closeModal2();
+    }
+
+
+
+
 
     function addToTeam() {
         var playerName = document.getElementById('playerName').value;

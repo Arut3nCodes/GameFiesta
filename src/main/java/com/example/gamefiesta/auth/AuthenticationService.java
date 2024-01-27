@@ -1,11 +1,14 @@
 package com.example.gamefiesta.auth;
 
+import java.util.ArrayList;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.gamefiesta.Inbox;
 import com.example.gamefiesta.JwtService;
 import com.example.gamefiesta.UserRepository;
 import com.example.gamefiesta.Users;
@@ -26,6 +29,7 @@ public class AuthenticationService {
             .username(request.getUsername())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
+            .inbox(new ArrayList<Inbox>())
             .build();
 
         repository.save(user);

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Optional;
 
 import org.springframework.boot.context.config.ConfigData.Option;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -160,6 +161,39 @@ public class InviteController {
         }
         return false;
     }
+
+    @PostMapping("/removeInvitationFromTeam")
+    @ResponseBody
+    public Boolean removeInvitationFromTeam(@RequestParam String playerID,@RequestParam String teamID) {
+        Optional<Team> teamOptional = teamRepository.findById(teamID);
+        Optional<Users> userOptional = userRepository.findById(playerID);
+
+        if(teamOptional.isPresent()){
+            Team team = teamOptional.get();
+            if(team.getInvitedList().contains(playerID)){
+                team.getInvitedList().remove(playerID);
+                teamRepository.save(team);
+
+
+                if(userOptional.isPresent()){
+                    Users user = userOptional.get();
+            if (removeInvitationForTeam(user, teamID)) {
+                // Save the changes to the user
+                userRepository.save(user);
+                return true;
+            } else {
+                return false;
+            }
+                
+        }
+
+            }
+        }
+
+        
+
+        return false;
+    }
     
 
 
@@ -199,6 +233,21 @@ public class InviteController {
         return false;
     }
     
+
+    private boolean removeInvitationForTeam(Users user, String teamId) {
+        // Filter out the invitation for the specified team from the user's inbox
+        List<Inbox> updatedInbox = user.getInbox().stream()
+                .filter(invite -> !("team".equals(invite.getType()) && teamId.equals(invite.getSource())))
+                .collect(Collectors.toList());
+
+        // Check if any invitation was removed
+        if (updatedInbox.size() < user.getInbox().size()) {
+            user.setInbox(updatedInbox);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
 }

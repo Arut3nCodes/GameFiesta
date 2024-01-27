@@ -1,0 +1,23 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #3F48CC;
+}
+
+#teams{
+    padding: 1rem;
+    width: 50%;
+    margin: auto;
+    background-color: white;
+}
+
+.teamObject{
+    padding: 1rem;
+}
+
+
+.showTeamMembers{
+    text-decoration: none;
+    font-weight: bold;
+    color: #3F48CC;
+}
