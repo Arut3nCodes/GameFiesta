@@ -1,17 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/styles/inviteInboxCSS.css">
+    <link rel="stylesheet" href="/styles/tournamentCSS.css">
 </head>
 <body>
-    <div id="tournaments">
-        <div th:each="tournament: ${tournaments}">
-            <span th:text="${tournament._id}"></span>
-            <button th:onclick="javascript:window.location.href='/tournaments/[(${tournament._id})]'"></button>
+    <div class="box">
+        <header>
+            <!-- Todo: Zrobić to css nie tutaj-->
+            <nav class="topnav" >
+                <ul>
+                    <li><a href="/home">Strona Główna</a></li>
+                    <li><a href="/tournaments">Turnieje</a></li>
+                </ul>
+            </nav>
+            <div class="right-header-content">
+                <div sec:authorize="isAuthenticated()">
+                    <div th:replace="/inviteInbox::inviteBtn"></div>
+                </div>
+                <div class="dropdown">
+                    <div class="usermenu">
+                        <div sec:authorize="isAnonymous()">
+                            <p class="usernameText">Guest</p>
+                        </div>
+                        <div sec:authorize="isAuthenticated()">
+                            <p class="usernameText"><div sec:authentication="principal.username"></div></p>
+                        </div>
+                    </div>
+                    <div sec:authorize="isAnonymous()">
+                        <div class="dropdown-content">
+                            <a href="/auth/login">Log In</a>
+                            <a href="/auth/register">Register</a>
+                        </div>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <div class="dropdown-content">
+                            <a href="/profile">Profil</a>
+                            <a href="/logout">Wyloguj</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div id="tournaments" class="contentsec">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="tournamentName">Nazwa turnieju</th>
+                        <th class="tournamentDescription">Opis turnieju</th>
+                        <th class="tournamentButton"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="tournament: ${tournaments}">
+                        <td class="tournamentName" th:text="${tournament.getTitle()}"></td>
+                        <td class="tournamentDescription" th:text="${tournament.getShortDescription()}">
+                        <td class="tournamentButton">
+                        <button th:onclick="javascript:window.location.href='/tournaments/[(${tournament._id})]'">Do turnieju</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
     </div>
 </body>
 </html>

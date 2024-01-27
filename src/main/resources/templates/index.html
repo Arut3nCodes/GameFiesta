@@ -9,6 +9,7 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
+
     <div sec:authorize="isAuthenticated()">
         <div sec:authentication="principal.username"></div>
         <div th:insert="/inviteInbox.html::inviteBtn"></div>

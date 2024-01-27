@@ -33,6 +33,7 @@ header {
 
 .topnav {
     height: 100%;
+    user-select: none;
 }
 
 .topnav ul {

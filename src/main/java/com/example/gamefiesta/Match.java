@@ -24,13 +24,13 @@ public class Match {
     private Date date;
     // przerobić żeby była lista "spotkań", spotkanie: TeamA, TeamB, Status, Data, a Match ma tylko tą liste i ID
     public Match(String _id){
-        this._id = _id;
-        this.teamA = "TBD";
-        this.teamB = "TBD";
-        this.scoreA = 0;
-        this.scoreB = 0;
-        this.matchWinner = "TBD";
-        this.status = "NOT STARTED";
+            this._id = _id;
+            this.teamA = "TBD";
+            this.teamB = "TBD";
+            this.scoreA = 0;
+            this.scoreB = 0;
+            this.matchWinner = "TBD";
+            this.status = "NOT STARTED";
     }
 
     @Override
