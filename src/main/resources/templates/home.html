@@ -13,11 +13,11 @@
 <body>
 <div class="box">
     <header>
-        <nav class="topnav">
+        <!-- Todo: Zrobić to css nie tutaj-->
+        <nav class="topnav" >
             <ul>
-                <li><a href="#">Preview</a></li>
-                <li><a href="#">Preview</a></li>
-                <li><a href="#">Preview</a></li>
+                <li><a href="/home">Strona Główna</a></li>
+                <li><a href="/tournaments">Turnieje</a></li>
             </ul>
         </nav>
         <div class="right-header-content">
@@ -41,9 +41,7 @@
                 </div>
                 <div sec:authorize="isAuthenticated()">
                     <div class="dropdown-content">
-                        <a href="#">Moje Turnieje</a>
-                        <a href="/myTeams">Moje drużyny</a>
-                        <a href="#">Zmień hasło</a>
+                        <a href="/profile">Profil</a>
                         <a href="/logout">Wyloguj</a>
                     </div>
                 </div>

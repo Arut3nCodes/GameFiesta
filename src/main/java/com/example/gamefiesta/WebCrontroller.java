@@ -37,7 +37,7 @@ public class WebCrontroller {
 
         model.addAttribute("tournaments", tournamentRepository.findAll());
         
-        return "index";
+        return "redirect:/home";
     }
 
 
