@@ -69,10 +69,6 @@ public class InviteController {
                 Team team = teamOptional.get();
                 boolean isAlreadyMember = team.getPlayers().contains(userId);
 
-                // System.out.println(team.getLeader());
-                // System.out.println(invitingUserr.get_id());
-                // System.out.println(team.getLeader()==invitingUserr.get_id());
-                // if (!isAlreadyMember && team.getLeader() == invitingUserr.get_id()) {
                 if (!isAlreadyMember && team.getLeader().equals(invitingUserr.get_id())){
                     boolean inviteExists = user.getInbox().stream()
                             .anyMatch(invite -> "team".equals(invite.getType()) &&
@@ -98,6 +94,70 @@ public class InviteController {
         return false;
     }
 
+
+    @PostMapping("/inviteToTournament")
+@ResponseBody
+public ResponseEntity<String> inviteToTournament(
+        @RequestParam String username,
+        @RequestParam String tournamentId) {
+
+    // Get the authenticated user (inviting user)
+    Object invitingUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Users invitingUserEntity = (Users) ((UserDetails) invitingUser);
+
+    // Find the user to be invited
+    Optional<Users> userOptional = userRepository.findUsersByUsername(username);
+    // Find the tournament
+    Optional<Tournament> tournamentOptional = tournamentRepository.findById(tournamentId);
+
+    if (userOptional.isPresent() && tournamentOptional.isPresent()) {
+        Users invitedUser = userOptional.get();
+        String invitedUserId = invitedUser.get_id();
+        Tournament tournament = tournamentOptional.get();
+
+        // Check if the inviting user is the leader of the tournament
+        if (tournament.getOrganizer().equals(invitingUserEntity.get_id())) {
+
+            // Check if the user is already a participant
+            // boolean isAlreadyParticipant = tournament.getParticipants().contains(invitedUserId);
+            boolean isAlreadyParticipant = false;
+
+            if (!isAlreadyParticipant) {
+                // Check if the invitation already exists
+                boolean inviteExists = invitedUser.getInbox().stream()
+                        .anyMatch(invite -> "tournament".equals(invite.getType()) &&
+                                tournamentId.equals(invite.getSource()) &&
+                                invitedUserId.equals(invite.getDestination()));
+
+                if (!inviteExists) {
+                    // If the invite doesn't exist, create it and add it to the user's inbox
+                    Inbox invite = new Inbox("tournament", tournamentId, invitedUserId);
+                    invitedUser.getInbox().add(invite);
+
+                    // Save the updated user with the new invite
+                    userRepository.save(invitedUser);
+
+                    // Update the tournament's invited list
+                    if (tournament.getInvitedList() == null) {
+                        tournament.setInvitedList(new ArrayList<>());
+                    }
+                    tournament.getInvitedList().add(invitedUserId);
+                    tournamentRepository.save(tournament);
+
+                    return ResponseEntity.ok("Player invited to the tournament.");
+                } else {
+                    return ResponseEntity.badRequest().body("Invitation already exists.");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Player is already a participant in the tournament.");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("User is not the leader of the tournament.");
+        }
+    } else {
+        return ResponseEntity.badRequest().body("User or tournament not found.");
+    }
+}
 
 
     @PostMapping("/joinTeam")
@@ -190,8 +250,7 @@ public class InviteController {
             }
         }
 
-        
-
+    
         return false;
     }
     
@@ -213,6 +272,25 @@ public class InviteController {
         .collect(Collectors.toList());
 
         return teamInvites;
+
+    }
+
+    @PostMapping("/getTournamentInvites")
+    @ResponseBody
+    public List<Tournament> getTournamentInvites() {
+        // Retrieve the authenticated user
+        Object userObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users user = (Users)((UserDetails) userObj);
+
+        List<Tournament> tournamentInvites = user.getInbox().stream()
+        .filter(invite -> "tournament".equals(invite.getType()))
+        .map(Inbox::getSource)
+        .map(tournamentId -> tournamentRepository.findById(tournamentId).orElse(null))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+
+        return tournamentInvites;
 
     }
 

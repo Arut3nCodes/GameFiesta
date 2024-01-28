@@ -7,6 +7,7 @@ function toggleContent() {
 
     if (invitesContainer.classList.contains('active')) {
         fetchInvites();
+        fetchTournamentInvites();
     } else {
         invitesList.innerHTML = '';
     }
@@ -23,11 +24,28 @@ function fetchInvites() {
         }
     };
     xhr.send();
+
 }
+
+function fetchTournamentInvites(){
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/getTournamentInvites', true);
+    xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            var teams = JSON.parse(xhr.responseText);
+            renderTournamentInvites(teams);
+        }
+    };
+    xhr.send();
+
+}
+
+
 
 function renderInvites(teams) {
     var invitesList = document.getElementById('invitesList');
-    invitesList.innerHTML = ''; // Clear existing invites
 
     if (teams.length > 0) {
         teams.forEach(function (team) {
@@ -63,6 +81,43 @@ function renderInvites(teams) {
     }
 }
 
+function renderTournamentInvites(tournaments) {
+    var invitesList = document.getElementById('invitesList');
+
+    if (tournaments.length > 0) {
+        tournaments.forEach(function (tournament) {
+            var inviteItem = document.createElement('li');
+            inviteItem.className = 'invite-item';
+
+            // Customize how each team invite is displayed
+            var tournamentNameElement = document.createElement('span');
+            tournamentNameElement.textContent = 'Tournament: ' + tournament.title;
+            inviteItem.appendChild(tournamentNameElement);
+
+            var acceptButton = document.createElement('button');
+            acceptButton.textContent = 'Accept';
+            acceptButton.onclick = function () {
+                acceptTournamentInvite(team._id);
+            };
+            inviteItem.appendChild(acceptButton);
+
+            var rejectButton = document.createElement('button');
+            rejectButton.textContent = 'Reject';
+            rejectButton.onclick = function () {
+                rejectInvite(team._id);
+            };
+            inviteItem.appendChild(rejectButton);
+
+            invitesList.appendChild(inviteItem);
+        });
+    } else {
+        // Display a message when there are no team invites
+        var noInvitesMessage = document.createElement('li');
+        noInvitesMessage.textContent = 'No tournament invites available';
+        invitesList.appendChild(noInvitesMessage);
+    }
+}
+
 function acceptInvite(teamId) {
 
     var xhrInv = new XMLHttpRequest();
@@ -76,6 +131,11 @@ function acceptInvite(teamId) {
     }
     xhrInv.send('teamID=' + encodeURIComponent(teamId));
     console.log('Accepted invite to team:', teamId);
+}
+
+
+function acceptTournamentInvite(tournamentId){
+
 }
 
 function rejectInvite(teamId) {

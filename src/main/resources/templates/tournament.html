@@ -17,6 +17,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#main" type="button"
                 role="tab" aria-controls="main" aria-selected="false">Main</button>
+
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="bracket-tab" data-bs-toggle="tab" data-bs-target="#bracket" type="button"
@@ -37,6 +38,38 @@
         <div class="tab-pane" id="rules" role="tabpanel" aria-labelledby="rules-tab">Tu zasady</div>
     </div>
 
+    <h2>Invite Player to Tournament</h2>
+
+    <form id="inviteForm">
+        <label for="username">Player Username:</label>
+        <input type="text" id="username" name="username" required>
+    
+    
+        <button type="button" onclick="invitePlayerToTournament()">Invite Player</button>
+    </form>
+
 </body>
+
+<script th:inline="javascript">
+    function invitePlayerToTournament() {
+        var username = document.getElementById('username').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/inviteToTournament', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                alert(xhr.responseText); // Display success message
+            } else {
+                alert(xhr.responseText); // Display error message
+            }
+        };
+
+        // Prepare data to send in the request
+        var data = 'username=' + encodeURIComponent(username) + '&tournamentId=' + encodeURIComponent(/*[[${tournament._id}]]*/ "");
+
+        xhr.send(data);
+    }
+</script>
 
 </html>
