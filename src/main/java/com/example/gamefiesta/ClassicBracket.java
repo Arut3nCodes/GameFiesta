@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class ClassicBracket extends Bracket{
     ArrayList<Match> listOfMatchObjects;
     public ClassicBracket(){
+        super();
         this.set_id("PogChamp");
         this.setType("Classic");
         this.setListOfMatches(new ArrayList<String>());
