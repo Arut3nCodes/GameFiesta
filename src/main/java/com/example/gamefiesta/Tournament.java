@@ -23,7 +23,7 @@ public class Tournament {
     private String organizer;
     private List<String> listOfMods;
     private List<String> listOfTeams;
-    private List<List<String>> listOfSquads;
+    private List<String> listOfSquads;
     private List<String> listOfPrices;
     private Bracket bracket;
     private Date date;

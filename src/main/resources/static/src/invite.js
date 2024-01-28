@@ -43,14 +43,14 @@ function fetchTournamentInvites(){
 }
 
 
-function fetchTeams(){
+function fetchTeams(tournamentId){
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/fetchTeams', true);
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     xhr.onload = function () {
         if (xhr.status === 200) {
             var teams = JSON.parse(xhr.responseText);
-            openModal(teams);
+            openModal(teams,tournamentId);
         }
     };
     xhr.send();
@@ -112,7 +112,7 @@ function renderTournamentInvites(tournaments) {
             var acceptButton = document.createElement('button');
             acceptButton.textContent = 'Accept';
             acceptButton.onclick = function () {
-                acceptTournamentInvite(tournaments._id);
+                acceptTournamentInvite(tournament._id);
                 
             };
             inviteItem.appendChild(acceptButton);
@@ -151,7 +151,7 @@ function acceptInvite(teamId) {
 
 
 function acceptTournamentInvite(tournamentId){
-    fetchTeams()
+    fetchTeams(tournamentId)
 }
 
 function rejectInvite(teamId) {
@@ -161,7 +161,7 @@ function rejectInvite(teamId) {
 }
 
 
-function openModal(teams) {
+function openModal(teams,tournamentId) {
     document.getElementById('myModal').style.display = 'block';
     let Obj = $("#modal-teams")
     Obj[0].innerHTML=""
@@ -174,42 +174,49 @@ function openModal(teams) {
         <div id="collapse${i}" class="panel-collapse collapse">
         ${
             team.players.map(function(key){
-                return `<li class="list-group-item">${key}  <input type="checkbox" id="" name="${team}" value="${key}"></li>`
+                return `<li class="list-group-item">${key}  <input type="checkbox" id="" name="${team._id}" value="${key}"></li>`
             }).join("")
         }
         </div>
         </div>
         `)
-        $("#modal-teams").append($teamOBJ)
+        Obj.append($teamOBJ)
     })
+    let $acceptButton = $(`<button onclick="joinTournament('${tournamentId}')">Accept Invitation</button>`)
+    Obj.append($acceptButton)
+}
+function joinTournament(tournamentId){
+    let team;
+    let players = [];
+
+    $('input:checked').each(function() {
+        players.push($(this).attr("value"));
+        team = $(this).attr("name")
+});
+  console.log(players)
+var xhrInv = new XMLHttpRequest();
+xhrInv.open('POST', '/joinTournament', true);
+xhrInv.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+xhrInv.onload = function(){
+    if(xhrInv.status === 200){
+        console.log(xhrInv.responseText)
+    }
+}
+let requestData = {
+    teamId: team,
+    tournamentId: tournamentId,
+    players: players
+};
+
+let requestDataJson = JSON.stringify(requestData);
+
+xhrInv.send(requestDataJson);
+
+
 }
 
 function closeModal() {
     document.getElementById('myModal').style.display = 'none';
 }
 
-
-{/* <div class="teamObject" th:each="team,iterator: ${teams}">
-
-<span th:text="${team.name}"></span>
-
-<button th:if="${team.leader == #authentication.principal._id}" th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
-
-<div class="panel panel-default"></div>
-<a data-bs-toggle="collapse" class="showTeamMembers" aria-expanded="false" th:href="@{'#collapse'+${iterator.index}}">Pokaż liste członków drużyny</a>
-<div th:id="collapse+${iterator.index}" class="panel-collapse collapse">
-    <ul class="list-group" th:each="player: ${team.players}">
-        <li class="list-group-item" th:text="${player}"></li>
-        <button th:if="${team.leader == #authentication.principal._id}"
-            th:attr="onclick=|removeFromTeam('${player}','${team._id}')|">Del</button>
-    </ul>
-    <ul class="list-group" th:each="player: ${team.invitedList}">
-        <li class="list-group-item" th:text="${player} + '      - Zaproszenie'"></li>
-        <button th:if="${team.leader == #authentication.principal._id}"
-            th:attr="onclick=|removeInvitationFromTeam('${player}','${team._id}')|">Del</button>
-    </ul>
-
-
-
-</div>
-</div> */}

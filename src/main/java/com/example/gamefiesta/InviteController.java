@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class InviteController {
     private final TournamentRepository tournamentRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
-
+    private final SquadRepository squadRepository;
 
     @PostMapping("/checkUser")
     @ResponseBody
@@ -294,6 +295,52 @@ public ResponseEntity<String> inviteToTournament(
 
     }
 
+
+    @PostMapping("/joinTournament")
+    @ResponseBody
+    public Boolean joinTournament(@RequestBody Map<String, Object> requestData) {
+        // Get the authenticated user
+        Object userObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users user = (Users) ((UserDetails) userObj);
+
+        List<String> players = (List<String>) requestData.get("players");
+        String teamId = (String) requestData.get("teamId");
+        String tournamentId = (String) requestData.get("tournamentId");
+        // Find the tournament by ID
+        Optional<Tournament> tournamentOptional = tournamentRepository.findById(tournamentId);
+        if (tournamentOptional.isPresent()) {
+            Tournament tournament = tournamentOptional.get();
+
+
+            // Check if the user is invited to the tournament
+            if (user.getInbox().stream()
+                    .anyMatch(invite -> "tournament".equals(invite.getType()) &&
+                            tournamentId.equals(invite.getSource()) &&
+                            user.get_id().equals(invite.getDestination()))) {
+
+                // Check if the user is not already a participant
+                if (!tournament.getListOfSquads().contains(user.get_id())) {
+                    Squad squad = new Squad(tournamentId, teamId, players);
+                    squadRepository.insert(squad);
+                    tournament.getListOfSquads().add(squad.get_id());
+
+                    
+
+                    tournamentRepository.save(tournament);
+
+                    user.setInbox(user.getInbox().stream()
+                            .filter(invite -> !("tournament".equals(invite.getType()) &&
+                                    tournamentId.equals(invite.getSource()) &&
+                                    user.get_id().equals(invite.getDestination())))
+                            .collect(Collectors.toList()));
+                    userRepository.save(user);
+
+                    return true;
+                }
+            } 
+        } 
+        return false;
+    }
 
 
 
