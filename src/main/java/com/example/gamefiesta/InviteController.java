@@ -294,6 +294,21 @@ public ResponseEntity<String> inviteToTournament(
 
     }
 
+
+
+
+    @PostMapping("/fetchTeams")
+    @ResponseBody
+    public List<Team> fetchTeams() {
+        // Retrieve the authenticated user
+        Object userObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users user = (Users)((UserDetails) userObj);
+        return teamRepository.findByLeader(user.get_id());
+
+    }
+
+
+
     @PostMapping("/addTeam")
     @ResponseBody
     public Boolean addTeam(@RequestParam String teamName, @RequestParam String user) {

@@ -43,6 +43,21 @@ function fetchTournamentInvites(){
 }
 
 
+function fetchTeams(){
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/fetchTeams', true);
+    xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            var teams = JSON.parse(xhr.responseText);
+            openModal(teams);
+        }
+    };
+    xhr.send();
+
+}
+
+
 
 function renderInvites(teams) {
     var invitesList = document.getElementById('invitesList');
@@ -97,14 +112,15 @@ function renderTournamentInvites(tournaments) {
             var acceptButton = document.createElement('button');
             acceptButton.textContent = 'Accept';
             acceptButton.onclick = function () {
-                acceptTournamentInvite(team._id);
+                acceptTournamentInvite(tournaments._id);
+                
             };
             inviteItem.appendChild(acceptButton);
 
             var rejectButton = document.createElement('button');
             rejectButton.textContent = 'Reject';
             rejectButton.onclick = function () {
-                rejectInvite(team._id);
+                rejectInvite(tournaments._id);
             };
             inviteItem.appendChild(rejectButton);
 
@@ -135,7 +151,7 @@ function acceptInvite(teamId) {
 
 
 function acceptTournamentInvite(tournamentId){
-
+    fetchTeams()
 }
 
 function rejectInvite(teamId) {
@@ -143,3 +159,57 @@ function rejectInvite(teamId) {
     // You can make an Ajax request or handle it based on your requirements
     console.log('Rejected invite to team:', teamId);
 }
+
+
+function openModal(teams) {
+    document.getElementById('myModal').style.display = 'block';
+    let Obj = $("#modal-teams")
+    Obj[0].innerHTML=""
+    teams.forEach((team,i) =>{
+        let $teamOBJ = $(`<div class="teamObject"">
+
+        <span >${team.name}</span>        
+        <div class="panel panel-default"></div>
+        <a data-bs-toggle="collapse" class="showTeamMembers" aria-expanded="false" href="#collapse${i}">Pokaż liste członków drużyny</a>
+        <div id="collapse${i}" class="panel-collapse collapse">
+        ${
+            team.players.map(function(key){
+                return `<li class="list-group-item">${key}  <input type="checkbox" id="" name="${team}" value="${key}"></li>`
+            }).join("")
+        }
+        </div>
+        </div>
+        `)
+        $("#modal-teams").append($teamOBJ)
+    })
+}
+
+function closeModal() {
+    document.getElementById('myModal').style.display = 'none';
+}
+
+
+{/* <div class="teamObject" th:each="team,iterator: ${teams}">
+
+<span th:text="${team.name}"></span>
+
+<button th:if="${team.leader == #authentication.principal._id}" th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
+
+<div class="panel panel-default"></div>
+<a data-bs-toggle="collapse" class="showTeamMembers" aria-expanded="false" th:href="@{'#collapse'+${iterator.index}}">Pokaż liste członków drużyny</a>
+<div th:id="collapse+${iterator.index}" class="panel-collapse collapse">
+    <ul class="list-group" th:each="player: ${team.players}">
+        <li class="list-group-item" th:text="${player}"></li>
+        <button th:if="${team.leader == #authentication.principal._id}"
+            th:attr="onclick=|removeFromTeam('${player}','${team._id}')|">Del</button>
+    </ul>
+    <ul class="list-group" th:each="player: ${team.invitedList}">
+        <li class="list-group-item" th:text="${player} + '      - Zaproszenie'"></li>
+        <button th:if="${team.leader == #authentication.principal._id}"
+            th:attr="onclick=|removeInvitationFromTeam('${player}','${team._id}')|">Del</button>
+    </ul>
+
+
+
+</div>
+</div> */}
