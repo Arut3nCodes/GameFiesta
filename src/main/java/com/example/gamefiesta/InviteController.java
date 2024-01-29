@@ -66,11 +66,11 @@ public class InviteController {
         Optional<Team> teamOptional = teamRepository.findById(teamID);
         if (userOptional.isPresent() && teamOptional.isPresent()) {
             Users user = userOptional.get();
-            String userId = user.get_id();
+            String userId = user.getUsername();
                 Team team = teamOptional.get();
                 boolean isAlreadyMember = team.getPlayers().contains(userId);
 
-                if (!isAlreadyMember && team.getLeader().equals(invitingUserr.get_id())){
+                if (!isAlreadyMember && team.getLeader().equals(invitingUserr.getUsername())){
                     boolean inviteExists = user.getInbox().stream()
                             .anyMatch(invite -> "team".equals(invite.getType()) &&
                                     teamID.equals(invite.getSource()) &&
@@ -113,11 +113,11 @@ public ResponseEntity<String> inviteToTournament(
 
     if (userOptional.isPresent() && tournamentOptional.isPresent()) {
         Users invitedUser = userOptional.get();
-        String invitedUserId = invitedUser.get_id();
+        String invitedUserId = invitedUser.getUsername();
         Tournament tournament = tournamentOptional.get();
 
         // Check if the inviting user is the leader of the tournament
-        if (tournament.getOrganizer().equals(invitingUserEntity.get_id())) {
+        if (tournament.getOrganizer().equals(invitingUserEntity.getUsername())) {
 
             // Check if the user is already a participant
             // boolean isAlreadyParticipant = tournament.getParticipants().contains(invitedUserId);
@@ -167,7 +167,7 @@ public ResponseEntity<String> inviteToTournament(
         Optional<Team> teamOptional = teamRepository.findById(teamID);
         Object userObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users user = (Users)((UserDetails) userObj);
-        String userId = user.get_id();
+        String userId = user.getUsername();
         
         if (teamOptional.isPresent()) {
             Team team = teamOptional.get();
@@ -316,7 +316,7 @@ public ResponseEntity<String> inviteToTournament(
             if (user.getInbox().stream()
                     .anyMatch(invite -> "tournament".equals(invite.getType()) &&
                             tournamentId.equals(invite.getSource()) &&
-                            user.get_id().equals(invite.getDestination()))) {
+                            user.getUsername().equals(invite.getDestination()))) {
 
                 // Check if the user is not already a participant
                 if (!tournament.getListOfSquads().contains(user.get_id())) {
@@ -331,13 +331,15 @@ public ResponseEntity<String> inviteToTournament(
                     user.setInbox(user.getInbox().stream()
                             .filter(invite -> !("tournament".equals(invite.getType()) &&
                                     tournamentId.equals(invite.getSource()) &&
-                                    user.get_id().equals(invite.getDestination())))
+                                    user.getUsername().equals(invite.getDestination())))
                             .collect(Collectors.toList()));
                     userRepository.save(user);
 
                     return true;
                 }
+
             } 
+
         } 
         return false;
     }
@@ -350,7 +352,7 @@ public ResponseEntity<String> inviteToTournament(
         // Retrieve the authenticated user
         Object userObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users user = (Users)((UserDetails) userObj);
-        return teamRepository.findByLeader(user.get_id());
+        return teamRepository.findByLeader(user.getUsername());
 
     }
 
@@ -365,8 +367,8 @@ public ResponseEntity<String> inviteToTournament(
         Optional<Users> userOptional = userRepository.findUsersByUsername(user);
         if(!teamOptional.isPresent() && userOptional.isPresent()){
             ArrayList<String> players = new ArrayList<>();
-            players.add(userOptional.get().get_id());
-            Team newTeam = new Team(null, userOptional.get().get_id(), teamName, players, new ArrayList<String>());
+            players.add(userOptional.get().getUsername());
+            Team newTeam = new Team(null, userOptional.get().getUsername(), teamName, players, new ArrayList<String>());
             teamRepository.insert(newTeam);
             return true;
         }
