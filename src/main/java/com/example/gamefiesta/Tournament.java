@@ -24,7 +24,7 @@ public class Tournament {
     private String organizer;
     private List<String> listOfMods;
     private List<String> listOfTeams;
-    private List<List<String>> listOfSquads;
+    private List<String> listOfSquads;
     private List<String> listOfPrices;
     @Transient
     private Bracket bracket;

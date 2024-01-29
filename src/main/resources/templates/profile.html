@@ -58,7 +58,7 @@
 
             <span th:text="${team.name}"></span>
 
-            <button th:if="${team.leader == #authentication.principal._id}" th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
+            <button th:if="${team.leader == user}" th:attr="onclick=|openModal('${team._id}')|">Dodaj do drużyny</button>
 
             <div class="panel panel-default"></div>
             <a data-bs-toggle="collapse" class="showTeamMembers" aria-expanded="false" th:href="@{'#collapse'+${iterator.index}}">Pokaż liste członków drużyny</a>
