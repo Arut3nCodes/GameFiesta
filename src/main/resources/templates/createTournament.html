@@ -12,7 +12,12 @@
     <input type="text" id="tournamentName" name="tournamentName" required><br>
 
     <label for="bracketType">Bracket Type:</label>
-    <input type="text" id="bracketType" name="bracketType" required><br>
+    <select id="bracketType" name="bracketType" required>
+        <option value="classic">Classic</option>
+    </select><br>
+
+    <label for="playerCount">Player Count:</label>
+    <input type="number" id="playerCount" name="playerCount" required><br>
 
     <label for="date">Date (format: yyyy-MM-dd):</label>
     <input type="text" id="date" name="date" placeholder="yyyy-MM-dd" required><br>

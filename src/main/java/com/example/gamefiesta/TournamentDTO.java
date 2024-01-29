@@ -12,6 +12,7 @@ import java.util.Date;
 public class TournamentDTO {
     private String tournamentName;
     private String bracketType;
+    private Integer playerCount;
     private String date;
     private String shortDescription;
     private String description;

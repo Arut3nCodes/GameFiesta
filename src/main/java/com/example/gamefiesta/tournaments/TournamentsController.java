@@ -1,20 +1,19 @@
 package com.example.gamefiesta.tournaments;
 
-import com.example.gamefiesta.TournamentDTO;
-import com.example.gamefiesta.TournamentService;
+import com.example.gamefiesta.*;
+import jdk.jshell.spi.ExecutionControl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.core.support.FragmentNotImplementedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Optional;
-import com.example.gamefiesta.Tournament;
-import com.example.gamefiesta.TournamentRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,20 +23,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TournamentsController {
     
-    private final TournamentRepository repository;
+    private final TournamentRepository tournamentRepository;
+    private final MatchRepository matchRepository;
+    private final BracketRepository bracketRepository;
+    private final TeamRepository teamRepository;
     private final TournamentService service;
 
     @GetMapping("")
-    public String showTournaments(Model model){
-        model.addAttribute("tournaments", repository.findAll());
-        return "tournaments";
+    public String showTournaments(@RequestParam(defaultValue = "0") int page, Model model) {
+        PageRequest pageable = PageRequest.of(page, 10); // Page size is 10
+        Page<Tournament> ppage = tournamentRepository.findAll(pageable);
+        model.addAttribute("page", ppage);
+        return "tournamentsWithPages";
     }
 
     @GetMapping("/{tournamentId}")
     public String showTournament(Model model,@PathVariable String tournamentId){
-        Optional<Tournament> tournament = repository.findById(tournamentId);
+        Optional<Tournament> tournament = tournamentRepository.findById(tournamentId);
         if(tournament.isPresent()){
-            model.addAttribute("tournament", tournament.get());
+            Tournament ttournament = tournament.get();
+            if(ttournament.getBracketId() != null) {
+                Optional<Bracket> bracket = bracketRepository.findById(ttournament.getBracketId());
+                if (bracket.isPresent()) {
+                    ttournament.setBracket(bracket.get());
+                }
+            }
+            model.addAttribute("tournament", ttournament);
+            model.addAttribute("numberOfTeams", ttournament.getListOfSquads()!=null ? ttournament.getListOfSquads().size() : 0);
             return "tournament";
         }
         return "index";
@@ -53,9 +65,12 @@ public class TournamentsController {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         try {
+            Bracket bracket = service.generateBracketBasedOnBracketType(formDTO.getBracketType().toLowerCase());
+            bracket = bracketRepository.save(bracket);
             Tournament tournament = new Tournament(
                     formDTO.getTournamentName(),
-                    formDTO.getBracketType(),
+                    bracket,
+                    formDTO.getPlayerCount(),
                     formatter.parse(formDTO.getDate()),
                     formDTO.getShortDescription(),
                     formDTO.getDescription()
@@ -66,6 +81,41 @@ public class TournamentsController {
             System.out.println("xdd");
         }
         return "redirect:/tournaments";
-
     }
+
+    @GetMapping("/tournamentsWithPages")
+    public String paginatedMongoPage(@RequestParam(defaultValue = "0") int page, Model model) {
+        PageRequest pageable = PageRequest.of(page, 10); // Page size is 10
+        Page<Tournament> ppage = tournamentRepository.findAll(pageable);
+        model.addAttribute("page", ppage);
+        return "tournamentsWithPages";
+    }
+
+    @PostMapping
+    public String handleDeleteForm(@RequestParam String tournamentId){
+        if(tournamentRepository.findById(tournamentId).isPresent()) {
+            service.removeTournament(tournamentRepository.findById(tournamentId).get());
+        }
+        return "redirect:/tournaments";
+    }
+
+    @PostMapping("/generateBracket")
+    public String generateBracket(@RequestParam String tournamentId){
+
+        Optional<Tournament> tournament = tournamentRepository.findById(tournamentId);
+        if(tournament.isPresent()){
+            Tournament ttournament = tournament.get();
+            if(ttournament.getBracketId() != null && !ttournament.getListOfTeams().isEmpty()) {
+                Optional<Bracket> bracket = bracketRepository.findById(ttournament.getBracketId());
+                if (bracket.isPresent()) {
+                    ttournament.setBracket(bracket.get());
+                    ttournament.getBracket().generateRandomLadder((ArrayList<String>)ttournament.getListOfTeams());
+                    ttournament.getBracket().setListOfMatchObjects(matchRepository.saveAll(ttournament.getBracket().getListOfMatchObjects()));
+                    bracketRepository.save(ttournament.getBracket());
+                }
+            }
+        }
+        return "redirect:/tournaments/" + tournamentId;
+    }
+
 }

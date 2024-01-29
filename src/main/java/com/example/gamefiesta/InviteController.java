@@ -40,8 +40,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/")
 @RequiredArgsConstructor
 public class InviteController {
-    
-
     private final TournamentRepository tournamentRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
