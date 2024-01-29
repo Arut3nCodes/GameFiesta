@@ -143,6 +143,7 @@ function acceptInvite(teamId) {
     xhrInv.onload = function(){
         if(xhrInv.status === 200){
             console.log(xhrInv.responseText)
+            location.reload();
         }
     }
     xhrInv.send('teamID=' + encodeURIComponent(teamId));
@@ -162,6 +163,7 @@ function rejectInvite(teamId,type) {
     xhrInv.onload = function(){
         if(xhrInv.status === 200){
             console.log(xhrInv.responseText)
+            location.reload();
         }
     }
     xhrInv.send('source=' + encodeURIComponent(teamId) + '&type='+encodeURIComponent(type));
@@ -209,6 +211,7 @@ xhrInv.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 xhrInv.onload = function(){
     if(xhrInv.status === 200){
         console.log(xhrInv.responseText)
+        location.reload();
     }
 }
 let requestData = {

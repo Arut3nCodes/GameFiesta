@@ -146,7 +146,7 @@
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
         xhr.onload = function () {
             if (xhr.status === 200) {
-                console.log(xhr.responseText);
+                location.reload();
             } else {
                 console.log('Error: ' + xhr.responseText);
             }
@@ -162,8 +162,10 @@
         xhr.onload = function () {
             if (xhr.status === 200) {
                 console.log(xhr.responseText);
+                location.reload();
             } else {
                 console.log('Error: ' + xhr.responseText);
+
             }
         };
         xhr.send('teamID=' + encodeURIComponent(team) + '&playerID=' + encodeURIComponent(player));
@@ -180,9 +182,7 @@
         xhr.onload = function () {
             if (xhr.status === 200) {
                 console.log(xhr.responseText);
-                if(xhr.responseText=="true"){
-                    
-                }
+                location.reload();
             } else {
                 console.log('Error: ' + xhr.responseText);
             }
@@ -214,6 +214,7 @@
                 xhrInv.onload = function () {
                     if (xhrInv.status === 200) {
                         console.log(xhrInv.responseText)
+                        location.reload();
                     }
                 }
                 xhrInv.send('username=' + encodeURIComponent(playerName) + '&teamID=' + encodeURIComponent(teamId));
