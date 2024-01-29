@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,7 +26,10 @@ public class Tournament {
     private List<String> listOfTeams;
     private List<List<String>> listOfSquads;
     private List<String> listOfPrices;
+    @Transient
     private Bracket bracket;
+    private String bracketId;
+    private Integer howManyPlayers;
     private Date date;
     private String status;
     @Indexed(unique=true)
@@ -34,15 +38,17 @@ public class Tournament {
     private String description;
     private List<String> invitedList;
 
-    public Tournament(String tournamentName, String bracketType, Date date, String shortDescription, String description){
+    public Tournament(String tournamentName, Bracket bracket, Integer howManyPlayers, Date date, String shortDescription, String description){
         this.organizer = "organizer";
         this.listOfMods = new ArrayList<>();
         this.listOfTeams = new ArrayList<>();
         this.listOfSquads = new ArrayList<>();
         this.listOfPrices = new ArrayList<>();
-        this.bracket = new Bracket(bracketType);
+        this.bracket = bracket;
+        this.bracketId = bracket.get_id();
+        this.howManyPlayers = howManyPlayers;
         this.date = date;
-        this.status = "";
+        this.status = "NOT STARTED";
         this.title = tournamentName;
         this.shortDescription = shortDescription;
         this.description = description;

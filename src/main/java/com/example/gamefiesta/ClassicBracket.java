@@ -1,14 +1,15 @@
 package com.example.gamefiesta;
 
-import java.util.ArrayList;
+import lombok.Data;
+import org.springframework.data.annotation.Transient;
 
+import java.util.ArrayList;
+@Data
 public class ClassicBracket extends Bracket{
+    @Transient
     ArrayList<Match> listOfMatchObjects;
     public ClassicBracket(){
-        super();
-        this.set_id("PogChamp");
-        this.setType("Classic");
-        this.setListOfMatches(new ArrayList<String>());
+        super("classic");
         this.setListOfMatchObjects(new ArrayList<Match>());
     }
 
