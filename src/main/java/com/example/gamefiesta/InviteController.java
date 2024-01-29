@@ -225,19 +225,17 @@ public ResponseEntity<String> inviteToTournament(
     @ResponseBody
     public Boolean removeInvitationFromTeam(@RequestParam String playerID,@RequestParam String teamID) {
         Optional<Team> teamOptional = teamRepository.findById(teamID);
-        Optional<Users> userOptional = userRepository.findById(playerID);
+        Optional<Users> userOptional = userRepository.findUsersByUsername(playerID);
 
         if(teamOptional.isPresent()){
             Team team = teamOptional.get();
             if(team.getInvitedList().contains(playerID)){
                 team.getInvitedList().remove(playerID);
                 teamRepository.save(team);
-
-
                 if(userOptional.isPresent()){
                     Users user = userOptional.get();
             if (removeInvitationForTeam(user, teamID)) {
-                // Save the changes to the user
+
                 userRepository.save(user);
                 return true;
             } else {
@@ -375,18 +373,79 @@ public ResponseEntity<String> inviteToTournament(
     
 
     private boolean removeInvitationForTeam(Users user, String teamId) {
-        // Filter out the invitation for the specified team from the user's inbox
         List<Inbox> updatedInbox = user.getInbox().stream()
                 .filter(invite -> !("team".equals(invite.getType()) && teamId.equals(invite.getSource())))
                 .collect(Collectors.toList());
 
-        // Check if any invitation was removed
         if (updatedInbox.size() < user.getInbox().size()) {
             user.setInbox(updatedInbox);
             return true;
         } else {
             return false;
         }
+    }
+
+    @PostMapping("/rejectInvitation")
+    @ResponseBody
+    private boolean rejectInvitation(@RequestParam String source, @RequestParam String type){
+        Object userObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users user = (Users)((UserDetails) userObj);
+        String userId = user.getUsername();
+
+        if(type.equals("team")){
+            Optional<Team> teamOptional = teamRepository.findById(source);
+            if (teamOptional.isPresent()) {
+                Team team = teamOptional.get();
+                // Check if there's a correct invite in the user's inbox
+                Optional<Inbox> inviteOptional = user.getInbox().stream()
+                        .filter(invite -> "team".equals(invite.getType()) &&
+                                source.equals(invite.getSource()) &&
+                                userId.equals(invite.getDestination()))
+                        .findFirst();
+        
+                if (inviteOptional.isPresent()) {
+                    // Remove the user from the team's invitedList
+                    if (team.getInvitedList() != null && team.getInvitedList().contains(userId)) {
+                        team.getInvitedList().remove(userId);
+                        teamRepository.save(team);
+    
+                    // Remove the invite from the user's inbox
+                    user.getInbox().remove(inviteOptional.get());
+                    userRepository.save(user);
+        
+                    return true;
+                    }
+        
+    
+                }
+            }
+        
+
+        }else if(type.equals("tournament")){
+            Optional<Tournament> tournamentOptional = tournamentRepository.findById(source);
+            if(tournamentOptional.isPresent()){
+                Tournament tournament = tournamentOptional.get();
+                Optional<Inbox> inviteOptional = user.getInbox().stream()
+                .filter(invite -> "tournament".equals(invite.getType()) &&
+                        source.equals(invite.getSource()) &&
+                        userId.equals(invite.getDestination()))
+                .findFirst();
+                if(inviteOptional.isPresent()){
+                    if(tournament.getInvitedList()!=null && tournament.getInvitedList().contains(userId)){
+                        tournament.getInvitedList().remove(userId);
+                        tournamentRepository.save(tournament);
+
+                        user.getInbox().remove(inviteOptional.get());
+                        userRepository.save(user);
+                        return true;
+                    }
+                }
+            }
+        }
+
+
+
+        return false;
     }
 
 
