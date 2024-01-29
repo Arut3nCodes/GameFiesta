@@ -1,14 +1,17 @@
 package com.example.gamefiesta.tournaments;
 
-import java.util.List;
-
-import org.springframework.security.access.method.P;
+import com.example.gamefiesta.TournamentDTO;
+import com.example.gamefiesta.TournamentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 import com.example.gamefiesta.Tournament;
 import com.example.gamefiesta.TournamentRepository;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class TournamentsController {
     
     private final TournamentRepository repository;
+    private final TournamentService service;
 
     @GetMapping("")
     public String showTournaments(Model model){
@@ -37,5 +41,31 @@ public class TournamentsController {
             return "tournament";
         }
         return "index";
+    }
+
+    @GetMapping("/createTournament")
+        public String createTournament(){
+            return "createTournament";
+        }
+
+    @PostMapping("/createTournament")
+        public String createTournamentSend(TournamentDTO formDTO, Model model){
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        try {
+            Tournament tournament = new Tournament(
+                    formDTO.getTournamentName(),
+                    formDTO.getBracketType(),
+                    formatter.parse(formDTO.getDate()),
+                    formDTO.getShortDescription(),
+                    formDTO.getDescription()
+            );
+
+            service.addTournament(tournament);
+        }catch(Exception e){
+            System.out.println("xdd");
+        }
+        return "redirect:/tournaments";
+
     }
 }

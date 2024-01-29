@@ -45,7 +45,8 @@ public class WebCrontroller {
     public String myTeams(Model model){
         Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users uu = (Users)((UserDetails) user);
-        model.addAttribute("teams", teamRepository.findByPlayers(uu.get_id()));
+        model.addAttribute("teams", teamRepository.findByPlayers(uu.getUsername()));
+        model.addAttribute("user", uu.getUsername());
         return "profile";
     }
 

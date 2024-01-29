@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GameFiesta - Tworzenie turnieju</title>
+</head>
+<body>
+<h1>Utwórz turniej</h1>
+
+<form action="/tournaments/createTournament" method="post">
+    <label for="tournamentName">Tournament Name:</label>
+    <input type="text" id="tournamentName" name="tournamentName" required><br>
+
+    <label for="bracketType">Bracket Type:</label>
+    <input type="text" id="bracketType" name="bracketType" required><br>
+
+    <label for="date">Date (format: yyyy-MM-dd):</label>
+    <input type="text" id="date" name="date" placeholder="yyyy-MM-dd" required><br>
+
+    <label for="shortDescription">Short Description:</label>
+    <input type="text" id="shortDescription" name="shortDescription" required><br>
+
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" required><br>
+
+    <input type="submit" value="Submit">
+</form>
+
+</body>
+</html>
