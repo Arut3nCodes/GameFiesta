@@ -43,28 +43,30 @@
             <div th:text="${tournament.description}"></div>
         </div>
         <div class="tab-pane" id="bracket" role="tabpanel" aria-labelledby="bracket-tab">
-            <div th:if="${tournament.getBracket().getListOfMatches() != null}">
-                <div th:if="${tournament.getBracket().getListOfMatches().isEmpty()}">
-                    <p>There are no matches currently, however if there are more than two teams you can generate bracket in settings</p>
-                </div>
-                <div th:else>
-                    <table>
-                        <thead>
-                            <th>Mecze</th>
-                        </thead>
-                        <tbody th:each="matchId : ${tournament.getBracket().getListOfMatches()}">
-                            <tr>
-                                <td th:text="${matchId}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div th:if="${tournament.getBracket()!= null}">
+                <div th:if="${tournament.getBracket().getListOfMatches() != null}">
+                    <div th:if="${tournament.getBracket().getListOfMatches().isEmpty()}">
+                        <p>There are no matches currently, however if there are more than two teams you can generate bracket in settings</p>
+                    </div>
+                    <div th:else>
+                        <table>
+                            <thead>
+                                <th>Mecze</th>
+                            </thead>
+                            <tbody th:each="matchId : ${tournament.getBracket().getListOfMatches()}">
+                                <tr>
+                                    <td th:text="${matchId}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="tab-pane" id="rules" role="tabpanel" aria-labelledby="rules-tab">Tu zasady</div>
         <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
             <p>Generate bracket</p>
-            <form method="post" action="/generateBracket">
+            <form id="generateForm" method="post" action="/tournaments/generateBracket">
                 <input type="hidden" name="tournamentId" th:value="${tournament.get_id()}" />
                 <button type="button" onclick="confirmGenerateBracket()">Generate Bracket</button>
             </form>
@@ -79,15 +81,15 @@
 
     <script th:inline="javascript">
         function confirmDelete() {
-            if (confirm('Are you sure you want to delete this tournament?')) {
+            if(confirm('Are you sure you want to delete this tournament?')){
                 // User clicked "OK", submit the form
                 document.getElementById('deleteForm').submit();
             }
         }
         function confirmGenerateBracket() {
-            if (confirm('Are you sure you want to generate the bracket?')) {
-                document.querySelector('form').submit();
-            }
+                if (confirm('Are you sure you want to generate the bracket?')) {
+                    document.getElementById('generateForm').submit();
+                }
         }
     </script>
 

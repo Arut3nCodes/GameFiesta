@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -23,7 +24,9 @@ import lombok.RequiredArgsConstructor;
 public class TournamentsController {
     
     private final TournamentRepository tournamentRepository;
+    private final MatchRepository matchRepository;
     private final BracketRepository bracketRepository;
+    private final TeamRepository teamRepository;
     private final TournamentService service;
 
     @GetMapping("")
@@ -98,7 +101,21 @@ public class TournamentsController {
 
     @PostMapping("/generateBracket")
     public String generateBracket(@RequestParam String tournamentId){
-        throw new UnsupportedOperationException("Method not implemented yet");
+
+        Optional<Tournament> tournament = tournamentRepository.findById(tournamentId);
+        if(tournament.isPresent()){
+            Tournament ttournament = tournament.get();
+            if(ttournament.getBracketId() != null && !ttournament.getListOfTeams().isEmpty()) {
+                Optional<Bracket> bracket = bracketRepository.findById(ttournament.getBracketId());
+                if (bracket.isPresent()) {
+                    ttournament.setBracket(bracket.get());
+                    ttournament.getBracket().generateRandomLadder((ArrayList<String>)ttournament.getListOfTeams());
+                    ttournament.getBracket().setListOfMatchObjects(matchRepository.saveAll(ttournament.getBracket().getListOfMatchObjects()));
+                    bracketRepository.save(ttournament.getBracket());
+                }
+            }
+        }
+        return "redirect:/tournaments/" + tournamentId;
     }
 
 }

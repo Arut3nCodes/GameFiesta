@@ -30,21 +30,62 @@ public class Match {
             this.scoreA = 0;
             this.scoreB = 0;
             this.matchWinner = "TBD";
-            this.status = "NOT STARTED";
+            this.setStatus(0);
+    }
+
+    public void setStatus(int choice) {
+        switch(choice){
+            case 0:
+                this.status = "NOT_STARTED";
+                break;
+            case 1:
+                this.status = "IN_PROGRESS";
+                break;
+            case 2:
+                this.status = "FINISHED";
+                break;
+        }
     }
 
     @Override
     public String toString(){
-        if(this.getStatus().equals("NOT STARTED")) {
-            return "Match " + get_id() + ": " + getTeamA() + " vs " + getTeamB() + " | Status: " + getStatus() + getMatchWinner();
+        if(this.getStatus().equals("NOT_STARTED")) {
+            return "Match " + get_id() + ": " + getTeamA() + " vs " + getTeamB() + " | Status: " + getStatus() + "| Winner: "+ getMatchWinner();
         }
         else{
             return "Match " + get_id() + ": " + getTeamA() + " vs " + getTeamB() + " | Status: " + getStatus() + " | Score: " + getScoreA() + "-" + getScoreB() + " | Winner: " + getMatchWinner();
         }
     }
 
-    public String setVictor(){
-        return null;
+    public void setVictor(boolean choice){
+        if(getStatus().equals("IN_PROGRESS")){
+            if (choice) {
+                setMatchWinner(getTeamA());
+            } else {
+                setMatchWinner(getTeamB());
+            }
+            this.setStatus(2);
+        }
+    }
+
+    public boolean autoSetVictor() {
+        if (getStatus().equals("IN_PROGRESS")) {
+            if (getScoreA() > getScoreB()) {
+                setMatchWinner(getTeamA());
+                return true;
+            } else if (getScoreB() < getScoreB()) {
+                setMatchWinner(getTeamB());
+                return true;
+            } else {
+                System.out.println("There is no winner yet");
+                return false;
+            }
+        }
+        else if (("BYE".equals(getTeamA()) || "BYE".equals(getTeamB())) && (!"TBD".equals(getTeamA()) || !"TBD".equals(getTeamB()))) {
+            setMatchWinner(getTeamA().equals("BYE") ? getTeamB() : getTeamA());
+            return true;
+        }
+        return false;
     }
 
     public void addPointToTeamA(){

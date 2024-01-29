@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 
 @Data
 @NoArgsConstructor
@@ -15,10 +16,17 @@ public class Bracket {
     @Id
     protected String _id;
     protected List<String> listOfMatches;
+    @Transient
+    protected List<Match> listOfMatchObjects;
     protected String type;
-    public void generateBracket(){
+    public void generateLadder(ArrayList<String> listOfTeams){
 
     }
+
+    public void generateRandomLadder(ArrayList<String> listOfTeams){
+
+    }
+
     Bracket(String type){
         this.listOfMatches = new ArrayList<>();
         this.type = type;
