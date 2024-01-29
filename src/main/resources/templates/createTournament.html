@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>GameFiesta - Tworzenie turnieju</title>
@@ -8,6 +8,8 @@
 <h1>Utwórz turniej</h1>
 
 <form action="/tournaments/createTournament" method="post">
+    <input type="hidden" id="organizerID" name="organizerId" th:value="${#authentication.principal.getUsername()}" required>
+
     <label for="tournamentName">Tournament Name:</label>
     <input type="text" id="tournamentName" name="tournamentName" required><br>
 

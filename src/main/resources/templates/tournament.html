@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -29,7 +29,7 @@
                 role="tab" aria-controls="rules" aria-selected="false">Zasady</button>
         </li>
 
-        <li class="nav-item" role="presentation">
+        <li class="nav-item" role="presentation" sec:authorize="isAuthenticated()" th:if="${tournament.getOrganizer().equals(#authentication.getPrincipal().getUsername())}">
             <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button"
                     role="tab" aria-controls="settings" aria-selected="false">Ustawienia</button>
         </li>
@@ -65,7 +65,8 @@
             </div>
         </div>
         <div class="tab-pane" id="rules" role="tabpanel" aria-labelledby="rules-tab">Tu zasady</div>
-        <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab" th:if="${tournament.getOrganizer().equals(#authentication.getPrincipal().getUsername())}">
+            <div sec:authorize="isAuthenticated()">
             <p>Generate bracket</p>
             <form id="generateForm" method="post" action="/tournaments/generateBracket">
                 <input type="hidden" name="tournamentId" th:value="${tournament.get_id()}" />
@@ -77,17 +78,19 @@
                 <input type="hidden" id="tournamentId" name="tournamentId" th:value="${tournament.get_id()}" />
                 <button type="button" onclick="confirmDelete()">Delete Tournament</button>
             </form>
+            <h2>Invite Player to Tournament</h2>
+
+            <form id="inviteForm">
+                <label for="username">Player Username:</label>
+                <input type="text" id="username" name="username" required>
+
+
+                <button type="button" onclick="invitePlayerToTournament()">Invite Player</button>
+            </form>
+            </div>
         </div>
     </div>
-    <h2>Invite Player to Tournament</h2>
 
-    <form id="inviteForm">
-        <label for="username">Player Username:</label>
-        <input type="text" id="username" name="username" required>
-    
-    
-        <button type="button" onclick="invitePlayerToTournament()">Invite Player</button>
-    </form>
 </body>
 
 <script th:inline="javascript">

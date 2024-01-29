@@ -38,8 +38,8 @@ public class Tournament {
     private String description;
     private List<String> invitedList;
 
-    public Tournament(String tournamentName, Bracket bracket, Integer howManyPlayers, Date date, String shortDescription, String description){
-        this.organizer = "organizer";
+    public Tournament(String tournamentName,String organizerId, Bracket bracket, Integer howManyPlayers, Date date, String shortDescription, String description){
+        this.organizer = organizerId;
         this.listOfMods = new ArrayList<>();
         this.listOfTeams = new ArrayList<>();
         this.listOfSquads = new ArrayList<>();

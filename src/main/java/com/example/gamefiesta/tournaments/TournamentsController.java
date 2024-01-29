@@ -69,6 +69,7 @@ public class TournamentsController {
             bracket = bracketRepository.save(bracket);
             Tournament tournament = new Tournament(
                     formDTO.getTournamentName(),
+                    formDTO.getOrganizerId(),
                     bracket,
                     formDTO.getPlayerCount(),
                     formatter.parse(formDTO.getDate()),
