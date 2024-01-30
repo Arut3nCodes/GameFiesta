@@ -27,7 +27,11 @@ public class Bracket {
 
     }
 
-    Bracket(String type){
+    public Match autoAdvanceTeam(Match match){
+        return null;
+    }
+
+    public Bracket(String type){
         this.listOfMatches = new ArrayList<>();
         this.type = type;
     }

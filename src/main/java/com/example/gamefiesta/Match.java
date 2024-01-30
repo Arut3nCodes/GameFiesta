@@ -13,7 +13,7 @@ import lombok.Data;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Match {
-    @Id
+        @Id
     private String _id;
     private String teamA;
     private String teamB;
@@ -22,7 +22,6 @@ public class Match {
     private String matchWinner;
     private String status;
     private Date date;
-    // przerobić żeby była lista "spotkań", spotkanie: TeamA, TeamB, Status, Data, a Match ma tylko tą liste i ID
     public Match(String _id){
             this._id = _id;
             this.teamA = "TBD";
@@ -72,17 +71,25 @@ public class Match {
         if (getStatus().equals("IN_PROGRESS")) {
             if (getScoreA() > getScoreB()) {
                 setMatchWinner(getTeamA());
+                setStatus(2);
                 return true;
-            } else if (getScoreB() < getScoreB()) {
+            } else if (getScoreA() < getScoreB()) {
                 setMatchWinner(getTeamB());
+                setStatus(2);
                 return true;
-            } else {
-                System.out.println("There is no winner yet");
-                return false;
             }
         }
-        else if (("BYE".equals(getTeamA()) || "BYE".equals(getTeamB())) && (!"TBD".equals(getTeamA()) || !"TBD".equals(getTeamB()))) {
+        if (("BYE".equals(getTeamA()) || "BYE".equals(getTeamB())) && (!"TBD".equals(getTeamA()) || !"TBD".equals(getTeamB()))) {
             setMatchWinner(getTeamA().equals("BYE") ? getTeamB() : getTeamA());
+            setStatus(2);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean startMatch(){
+        if(getStatus().equals("NOT_STARTED") && !teamA.equals("TBD") && !teamB.equals("TBD")){
+            setStatus(1);
             return true;
         }
         return false;

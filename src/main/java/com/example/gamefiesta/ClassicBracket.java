@@ -118,7 +118,7 @@ public class ClassicBracket extends Bracket{
         if(matchIndex < getListOfMatches().size() & matchIndex >= 0) {
             Match match = getListOfMatchObjects().get(matchIndex);
             if (!match.getTeamA().equals("TBD") && !match.getTeamB().equals("TBD")){
-                if(match.getStatus().equals("NOT_STARTED")){
+                 if(match.getStatus().equals("NOT_STARTED")){
                     System.out.println("Match " + matchIndex + "was started");
                     match.setStatus(1);
                     return true;
@@ -178,6 +178,25 @@ public class ClassicBracket extends Bracket{
             return true;
         }
         return false;
+    }
+
+    public Match autoAdvanceTeam(Match match){
+        if(match != null){
+            int indexOfAdvancements = this.getListOfMatchObjects().indexOf(match);
+            if(match.autoSetVictor()) {
+                Match toBeAdvancedTo = this.getListOfMatchObjects().stream()
+                        .filter(m -> m.get_id().equals(this.mapOfAdvancement.get(indexOfAdvancements - 1)))
+                        .findFirst()
+                        .orElse(null);
+                if (indexOfAdvancements % 2 == 0) {
+                    toBeAdvancedTo.setTeamB(match.getMatchWinner());
+                } else {
+                    toBeAdvancedTo.setTeamA(match.getMatchWinner());
+                }
+                return toBeAdvancedTo;
+            }
+        }
+        return null;
     }
 
 }
