@@ -13,12 +13,43 @@
 </head>
 
 <body>
+<header>
     <nav class="topnav" >
         <ul>
             <li><a href="/home">Strona Główna</a></li>
             <li><a href="/tournaments">Turnieje</a></li>
         </ul>
     </nav>
+    <div class="right-header-content">
+        <div sec:authorize="isAuthenticated()">
+            <div th:replace="/inviteInbox::inviteBtn"></div>
+        </div>
+        <div class="dropdown">
+            <div class="usermenu">
+                <div sec:authorize="isAnonymous()">
+                    <p class="usernameText">Guest</p>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <p class="usernameText"><div sec:authentication="principal.username"></div></p>
+                </div>
+            </div>
+            <div sec:authorize="isAnonymous()">
+                <div class="dropdown-content">
+                    <a href="/auth/login">Log In</a>
+                    <a href="/auth/register">Register</a>
+                </div>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <div class="dropdown-content">
+                    <a href="/profile">Profil</a>
+                    <a href="/logout">Wyloguj</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</header>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#main" type="button"
@@ -147,22 +178,6 @@
             document.getElementById('deleteForm').submit();
         }
     }
-
-    document.getElementById('showFormBtn').addEventListener('click', function() {
-        document.getElementById('floatingFormContainer').classList.remove('hidden');
-    });
-
-    document.getElementById('closeFormBtn').addEventListener('click', function() {
-        document.getElementById('floatingFormContainer').classList.add('hidden');
-    });
-
-    document.getElementById('myForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        // Add your form submission logic here
-        alert('Form submitted!');
-        // You can also close the form after submission if needed
-        document.getElementById('floatingFormContainer').classList.add('hidden');
-    });
 
     function confirmGenerateBracket() {
         if (confirm('Are you sure you want to generate the bracket?')) {

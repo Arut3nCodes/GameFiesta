@@ -3,9 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>GameFiesta - Tworzenie turnieju</title>
+    <link rel="stylesheet" href="/styles/createTournamentCSS.css">
 </head>
 <body>
-<h1>Utwórz turniej</h1>
+
+<header>
+    <nav class="topnav" >
+        <ul>
+            <li><a href="/home">Strona Główna</a></li>
+            <li><a href="/tournaments">Turnieje</a></li>
+        </ul>
+    </nav>
+    <div class="right-header-content">
+        <div sec:authorize="isAuthenticated()">
+            <div th:replace="/inviteInbox::inviteBtn"></div>
+        </div>
+        <div class="dropdown">
+            <div class="usermenu">
+                <div sec:authorize="isAnonymous()">
+                    <p class="usernameText">Guest</p>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <p class="usernameText"><div sec:authentication="principal.username"></div></p>
+                </div>
+            </div>
+            <div sec:authorize="isAnonymous()">
+                <div class="dropdown-content">
+                    <a href="/auth/login">Log In</a>
+                    <a href="/auth/register">Register</a>
+                </div>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <div class="dropdown-content">
+                    <a href="/profile">Profil</a>
+                    <a href="/logout">Wyloguj</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 
 <form action="/tournaments/createTournament" method="post">
     <input type="hidden" id="organizerID" name="organizerId" th:value="${#authentication.principal.getUsername()}" required>

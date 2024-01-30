@@ -1,3 +1,10 @@
+body {
+    background-color: #f0f0f0; /* Light gray background */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
 header {
     background: whitesmoke;
     width: 100vw;
@@ -45,3 +52,112 @@ header {
     background-color: #3F48CC;
     color: whitesmoke;
 }
+
+.contentsec{
+    flex: 1;
+    width: 100vw;
+    display: inline-flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.usermenu {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+    justify-content: flex-start;
+    float: right;
+    box-sizing: border-box;
+    height: 53px;
+    width: 150px;
+    padding: 10px;
+}
+
+.usermenu:hover {
+    background-color: #00A2E8;
+    color: white;
+}
+
+.usermenu img{
+    height: 32px;
+    width: 32px;
+    margin-right: 8px
+}
+
+.usermenu p{
+    font-family: system-ui;
+    font-size: 16px;
+    margin: 0;
+}
+
+.dropdown {
+    display: inline-block;
+    width: 150px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: whitesmoke;
+    width: inherit;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    top: 53px;
+    right: 0;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+form {
+    background-color: #fff; /* White background for the form */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle lift */
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 400px; /* Adjust as needed */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333; /* Dark gray color for labels */
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 5px; /* Rounded corners for input elements */
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background-color: #3F48CC; /* Google blue color for the submit button */
+    color: #fff; /* White text color */
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #3F48CC; /* Darker blue on hover */
+}
+
