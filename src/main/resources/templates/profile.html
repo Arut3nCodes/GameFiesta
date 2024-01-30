@@ -15,10 +15,50 @@
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/modal.css">
     <link rel="stylesheet" href="/styles/team.css">
+    <link rel="stylesheet" href="/styles/homeCSS.css">
     <title>Document</title>
 </head>
 
 <body>
+
+    <header>
+        <nav class="topnav" >
+            <ul>
+                <li><a href="/home">Strona Główna</a></li>
+                <li><a href="/tournaments">Turnieje</a></li>
+            </ul>
+        </nav>
+        <div class="right-header-content">
+            <div sec:authorize="isAuthenticated()">
+                <div th:replace="/inviteInbox::inviteBtn"></div>
+            </div>
+            <div class="dropdown">
+                <div class="usermenu">
+                    <div sec:authorize="isAnonymous()">
+                        <p class="usernameText">Guest</p>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <p class="usernameText"><div sec:authentication="principal.username"></div></p>
+                    </div>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <div class="dropdown-content">
+                        <a href="/auth/login">Log In</a>
+                        <a href="/auth/register">Register</a>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <div class="dropdown-content">
+                        <a href="/profile">Profil</a>
+                        <a href="/logout">Wyloguj</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </header>
+
 
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -31,21 +71,15 @@
                 role="tab" aria-controls="teams" aria-selected="true">Drużyny</button>
         </li>
 
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tournaments-tab" data-bs-toggle="tab" data-bs-target="#tournaments" type="button"
-                role="tab" aria-controls="tournaments" aria-selected="false">Turnieje</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="add-tournament-tab" data-bs-toggle="tab" data-bs-target="#add-tournament" type="button"
-                role="tab" aria-controls="add-tournament" aria-selected="false">Stwórz turniej</button>
-        </li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content">
-        <div class="tab-pane active" id="profile" role="tabpanel" aria-labelledby="profile-tab">Profil
+        <div class="profile tab-pane active" id="profile" role="tabpanel" aria-labelledby="profile-tab">Zmiana hasła użytkownika
             <form method="post" role="form" th:action="@{/auth/changePassword}">
+                <label for="oldPassword">Stare hasło</label>
                 <input type="password" name="oldPassword">
+                <label for="newPassword">Nowe hasło</label>
                 <input type="password" name="newPassword">
                 <input type="submit" value="Wyslij">
             </form>
@@ -66,20 +100,18 @@
                 <ul class="list-group" th:each="player: ${team.players}">
                     <li class="list-group-item" th:text="${player}"></li>
                     <button th:if="${team.leader == user}"
-                        th:attr="onclick=|removeFromTeam('${player}','${team._id}')|">Del</button>
+                        th:attr="onclick=|removeFromTeam('${player}','${team._id}')|">Usuń</button>
                 </ul>
                 <ul class="list-group" th:each="player: ${team.invitedList}">
                     <li class="list-group-item" th:text="${player} + '      - Zaproszenie'"></li>
                     <button th:if="${team.leader == user}"
-                        th:attr="onclick=|removeInvitationFromTeam('${player}','${team._id}')|">Del</button>
+                        th:attr="onclick=|removeInvitationFromTeam('${player}','${team._id}')|">Usuń zaproszenie</button>
                 </ul>
 
 
 
             </div>
         </div></div>
-        <div class="tab-pane" id="tournaments" role="tabpanel" aria-labelledby="tournaments-tab">turnieje</div>
-        <div class="tab-pane" id="add-tournament" role="tabpanel" aria-labelledby="add-tournament-tab">Tu formularz tworzenia turnieju</div>
     </div>
 
     

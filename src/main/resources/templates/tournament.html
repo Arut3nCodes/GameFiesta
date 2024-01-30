@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -8,11 +8,48 @@
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/modal.css">
+    <link rel="stylesheet" href="/styles/singleTournament.css">
     <title>Document</title>
 </head>
 
 <body>
-    <div th:text="${tournament.toString()}"></div>
+<header>
+    <nav class="topnav" >
+        <ul>
+            <li><a href="/home">Strona Główna</a></li>
+            <li><a href="/tournaments">Turnieje</a></li>
+        </ul>
+    </nav>
+    <div class="right-header-content">
+        <div sec:authorize="isAuthenticated()">
+            <div th:replace="/inviteInbox::inviteBtn"></div>
+        </div>
+        <div class="dropdown">
+            <div class="usermenu">
+                <div sec:authorize="isAnonymous()">
+                    <p class="usernameText">Guest</p>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <p class="usernameText"><div sec:authentication="principal.username"></div></p>
+                </div>
+            </div>
+            <div sec:authorize="isAnonymous()">
+                <div class="dropdown-content">
+                    <a href="/auth/login">Log In</a>
+                    <a href="/auth/register">Register</a>
+                </div>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <div class="dropdown-content">
+                    <a href="/profile">Profil</a>
+                    <a href="/logout">Wyloguj</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</header>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#main" type="button"
@@ -29,7 +66,7 @@
                 role="tab" aria-controls="rules" aria-selected="false">Zasady</button>
         </li>
 
-        <li class="nav-item" role="presentation">
+        <li class="nav-item" role="presentation" sec:authorize="isAuthenticated()" th:if="${tournament.getOrganizer().equals(#authentication.principal.getUsername())}">
             <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button"
                     role="tab" aria-controls="settings" aria-selected="false">Ustawienia</button>
         </li>
@@ -38,9 +75,9 @@
     <div class="tab-content">
         <div class="tab-pane" id="main" role="tabpanel" aria-labelledby="main-tab">
             <h1 th:text="'Witaj na turnieju' + ${tournament.getTitle()} + '!'"></h1>
-            <p th:text="'Organizatorem turnieju jest: '">
-            <p th:text="'Obecna ilosc zespolow: '+ ${numberOfTeams}">
-            <p th:text="'Ilosc zespolow w druzynach: '+ ${tournament.getHowManyPlayers()}">
+            <p th:text="'Organizatorem turnieju jest: ' + ${tournament.getOrganizer()}">
+            <p th:text="'Obecna ilość zespołów: '+ ${numberOfTeams}">
+            <p th:text="'Ilość zawodników w drużynach: '+ ${tournament.getHowManyPlayers()}">
             <div th:text="${tournament.description}"></div>
         </div>
         <div class="tab-pane" id="bracket" role="tabpanel" aria-labelledby="bracket-tab">
@@ -50,13 +87,37 @@
                         <p>There are no matches currently, however if there are more than two teams you can generate bracket in settings</p>
                     </div>
                     <div th:else>
-                        <table>
+                        <table style="overflow: scroll">
                             <thead>
                                 <th>Mecze</th>
                             </thead>
-                            <tbody th:each="matchId : ${tournament.getBracket().getListOfMatches()}">
+                            <tbody th:each="matchId : ${tournament.getBracket().getListOfMatchObjects()}">
                                 <tr>
-                                    <td th:text="${matchId}"></td>
+                                    <td th:text="${matchId.toString()}"></td>
+                                    <td th:if="${matchId.getStatus().equals('NOT_STARTED')}">
+                                        <form th:action="@{/tournaments/{tournamentId}/{matchId}/startMatch(tournamentId=${tournamentId}, matchId=${matchId.get_id()})}" method="post">
+                                            <input type="submit" value="Start Match" />
+                                        </form>
+                                    <td th:if="${matchId.getStatus().equals('IN_PROGRESS')}">
+                                    <form th:action="@{/tournaments/{tournamentId}/{matchId}/addPointToTeamA(tournamentId=${tournamentId}, matchId=${matchId.get_id()})}" method="post">
+                                        <input type="submit" value="+1 TeamA" />
+                                    </form>
+                                    </td>
+                                    <td th:if="${matchId.getStatus().equals('IN_PROGRESS')}">
+                                        <form th:action="@{/tournaments/{tournamentId}/{matchId}/addPointToTeamB(tournamentId=${tournamentId}, matchId=${matchId.get_id()})}" method="post">
+                                            <input type="submit" value="+1 TeamB" />
+                                        </form>
+                                    </td>
+                                    <td th:if="${matchId.getStatus().equals('IN_PROGRESS')}">
+                                        <form th:action="@{/tournaments/{tournamentId}/{matchId}/autoSetVictor(tournamentId=${tournamentId}, matchId=${matchId.get_id()})}" method="post">
+                                            <input type="submit" value="Auto set victor" />
+                                        </form>
+                                    </td>
+                                    <td th:if="${matchId.getStatus().equals('IN_PROGRESS')}">
+                                        <form th:action="@{/tournaments/{tournamentId}/{matchId}/setVictorManually(tournamentId=${tournamentId}, matchId=${matchId.get_id()})}" method="post">
+                                            <input type="submit" value="Manually set victor" />
+                                        </form>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -65,7 +126,8 @@
             </div>
         </div>
         <div class="tab-pane" id="rules" role="tabpanel" aria-labelledby="rules-tab">Tu zasady</div>
-        <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab" sec:authorize="isAuthenticated()" th:if="${tournament.getOrganizer().equals((#authentication.getPrincipal().getUsername()))}">
+            <div sec:authorize="isAuthenticated()">
             <p>Generate bracket</p>
             <form id="generateForm" method="post" action="/tournaments/generateBracket">
                 <input type="hidden" name="tournamentId" th:value="${tournament.get_id()}" />
@@ -77,17 +139,18 @@
                 <input type="hidden" id="tournamentId" name="tournamentId" th:value="${tournament.get_id()}" />
                 <button type="button" onclick="confirmDelete()">Delete Tournament</button>
             </form>
+            <h2>Invite Player to Tournament</h2>
+
+            <form id="inviteForm">
+                <label for="username">Player Username:</label>
+                <input type="text" id="username" name="username" required>
+
+
+                <button type="button" onclick="invitePlayerToTournament()">Invite Player</button>
+            </form>
+            </div>
         </div>
     </div>
-    <h2>Invite Player to Tournament</h2>
-
-    <form id="inviteForm">
-        <label for="username">Player Username:</label>
-        <input type="text" id="username" name="username" required>
-    
-    
-        <button type="button" onclick="invitePlayerToTournament()">Invite Player</button>
-    </form>
 </body>
 
 <script th:inline="javascript">
@@ -99,13 +162,12 @@
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
         xhr.onload = function () {
             if (xhr.status === 200) {
-                alert(xhr.responseText); // Display success message
+                alert(xhr.responseText);
             } else {
-                alert(xhr.responseText); // Display error message
+                alert(xhr.responseText);
             }
         };
 
-        // Prepare data to send in the request
         var data = 'username=' + encodeURIComponent(username) + '&tournamentId=' + encodeURIComponent(/*[[${tournament._id}]]*/ "");
 
         xhr.send(data);
@@ -113,10 +175,10 @@
   
     function confirmDelete() {
         if(confirm('Are you sure you want to delete this tournament?')){
-            // User clicked "OK", submit the form
             document.getElementById('deleteForm').submit();
         }
     }
+
     function confirmGenerateBracket() {
         if (confirm('Are you sure you want to generate the bracket?')) {
             document.getElementById('generateForm').submit();

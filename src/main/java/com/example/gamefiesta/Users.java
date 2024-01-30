@@ -42,18 +42,11 @@ public class Users implements UserDetails {
         this.inbox = new ArrayList<Inbox>();
     }
 
-
-
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
         // throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
     }
-
-
-
 
     @Override
     public boolean isAccountNonExpired() {

@@ -11,6 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class TournamentDTO {
     private String tournamentName;
+    private String organizerId;
     private String bracketType;
     private Integer playerCount;
     private String date;
