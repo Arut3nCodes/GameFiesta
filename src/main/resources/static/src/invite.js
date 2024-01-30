@@ -82,7 +82,7 @@ function renderInvites(teams) {
             var rejectButton = document.createElement('button');
             rejectButton.textContent = 'Reject';
             rejectButton.onclick = function () {
-                rejectInvite(team._id);
+                rejectInvite(team._id,"team");
             };
             inviteItem.appendChild(rejectButton);
 
@@ -120,7 +120,7 @@ function renderTournamentInvites(tournaments) {
             var rejectButton = document.createElement('button');
             rejectButton.textContent = 'Reject';
             rejectButton.onclick = function () {
-                rejectInvite(tournaments._id);
+                rejectInvite(tournaments[0]._id,'tournament');
             };
             inviteItem.appendChild(rejectButton);
 
@@ -143,6 +143,7 @@ function acceptInvite(teamId) {
     xhrInv.onload = function(){
         if(xhrInv.status === 200){
             console.log(xhrInv.responseText)
+            location.reload();
         }
     }
     xhrInv.send('teamID=' + encodeURIComponent(teamId));
@@ -154,10 +155,19 @@ function acceptTournamentInvite(tournamentId){
     fetchTeams(tournamentId)
 }
 
-function rejectInvite(teamId) {
-    // Implement logic to reject the invite
-    // You can make an Ajax request or handle it based on your requirements
-    console.log('Rejected invite to team:', teamId);
+function rejectInvite(teamId,type) {
+    var xhrInv = new XMLHttpRequest();
+    xhrInv.open('POST', '/rejectInvitation', true);
+    xhrInv.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+    xhrInv.onload = function(){
+        if(xhrInv.status === 200){
+            console.log(xhrInv.responseText)
+            location.reload();
+        }
+    }
+    xhrInv.send('source=' + encodeURIComponent(teamId) + '&type='+encodeURIComponent(type));
+
 }
 
 
@@ -201,6 +211,7 @@ xhrInv.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 xhrInv.onload = function(){
     if(xhrInv.status === 200){
         console.log(xhrInv.responseText)
+        location.reload();
     }
 }
 let requestData = {
